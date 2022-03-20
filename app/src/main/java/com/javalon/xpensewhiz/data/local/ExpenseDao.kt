@@ -14,7 +14,7 @@ interface ExpenseDao {
     suspend fun insertExpense(expense: ExpenseDto)
 
     @Query("SELECT * FROM expense_table WHERE entry_date = :entryDate")
-    fun getDailyExpense(entryDate: String) : Flow<ExpenseDto>
+    fun getDailyExpense(entryDate: String) : Flow<List<ExpenseDto>>
 
     @Query("SELECT * FROM expense_table")
     fun getMonthlyExpense() : Flow<List<ExpenseDto>>

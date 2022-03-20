@@ -1,9 +1,9 @@
 package com.javalon.xpensewhiz.domain.model
 
-import com.javalon.xpensewhiz.data.local.entity.ExpenseInfo
-import java.util.*
+import java.util.Date
 
 data class Expense(
     val date: Date,
-    val expenseList: List<ExpenseInfo>
+    val amount: Double,
+    val expenseType: String
 )

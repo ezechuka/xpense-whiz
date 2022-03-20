@@ -4,23 +4,19 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.javalon.xpensewhiz.domain.model.Expense
-import java.util.*
+import java.util.Date
 
 @Entity(tableName = "expense_table")
 data class ExpenseDto(
     @PrimaryKey
-    @ColumnInfo(name = "entry_date")
-    val dateOfEntry: String,
     @ColumnInfo(name = "timestamp")
     val date: Date,
-    @ColumnInfo(name = "expenses")
-    val expenseList: List<ExpenseInfo>
-) {
-    fun toExpense() = Expense(date, expenseList)
-}
-
-data class ExpenseInfo(
+    @ColumnInfo(name = "entry_date")
+    val dateOfEntry: String,
+    @ColumnInfo(name = "amount")
     val amount: Double,
-    val date: Date,
+    @ColumnInfo(name = "expense")
     val expenseType: String
-)
+) {
+    fun toExpense() = Expense(date, amount, expenseType)
+}

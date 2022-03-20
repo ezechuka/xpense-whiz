@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class GetDailyExpenseUseCase @Inject constructor(private val repo: ExpenseRepository) {
 
-    operator fun invoke(entryDate: String): Flow<ExpenseDto?> {
+    operator fun invoke(entryDate: String): Flow<List<ExpenseDto>?> {
         return repo.getDailyExpense(entryDate)
     }
 }
