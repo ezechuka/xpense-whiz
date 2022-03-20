@@ -2,14 +2,12 @@ package com.javalon.xpensewhiz.presentation.home_screen.components
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
@@ -18,20 +16,17 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
-import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.javalon.xpensewhiz.R
@@ -42,9 +37,8 @@ import com.javalon.xpensewhiz.presentation.ui.theme.LightBlue3
 import com.javalon.xpensewhiz.util.spacing
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
-import java.util.*
+import java.util.Currency
 import kotlin.math.abs
-import kotlin.math.min
 
 @ExperimentalMaterialApi
 @ExperimentalUnitApi
@@ -151,7 +145,9 @@ fun Header(
             )
 
             val animatedAmount by animateFloatAsState(
-                targetValue = homeViewModel.totalAmountPerDay.value.toFloat(),
+                targetValue = if (homeViewModel.tabButton.value == com.javalon.xpensewhiz.presentation.home_screen.TabButton.TODAY)
+                    homeViewModel.totalAmountPerDay.value.toFloat()
+                else homeViewModel.totalAmountMonthly.value.toFloat(),
                 animationSpec = tween(durationMillis = 900)
             )
             Text(

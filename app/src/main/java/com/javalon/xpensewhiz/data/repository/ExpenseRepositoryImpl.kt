@@ -11,7 +11,7 @@ class ExpenseRepositoryImpl @Inject constructor(private val dao: ExpenseDao) : E
         dao.insertExpense(expense = dailyExpense)
     }
 
-    override fun getDailyExpense(entryDate: String) : Flow<ExpenseDto> {
+    override fun getDailyExpense(entryDate: String) : Flow<List<ExpenseDto>> {
         return dao.getDailyExpense(entryDate)
     }
 

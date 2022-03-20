@@ -10,8 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.javalon.xpensewhiz.R
 import com.javalon.xpensewhiz.data.local.entity.ExpenseDto
-import com.javalon.xpensewhiz.data.local.entity.ExpenseInfo
-import com.javalon.xpensewhiz.domain.usecase.GetCurrencyUseCase
+import com.javalon.xpensewhiz.domain.model.Expense
 import com.javalon.xpensewhiz.domain.usecase.read_database.GetDailyExpenseUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_database.GetMonthlyExpenseUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.InsertNewExpenseUseCase
@@ -43,11 +42,11 @@ class HomeViewModel @Inject constructor(
     private var _expenseAmount = mutableStateOf("0.00")
     val expenseAmount: State<String> = _expenseAmount
 
-    private var _dailyExpense = mutableStateOf(emptyList<ExpenseInfo>())
-    val dailyExpense: State<List<ExpenseInfo>> = _dailyExpense
+    private var _dailyExpense = mutableStateOf(emptyList<Expense>())
+    val dailyExpense: State<List<Expense>> = _dailyExpense
 
-    private var _monthlyExpense = mutableStateOf(listOf(mapOf<String, List<ExpenseInfo>>()))
-    val monthlyExpense: State<List<Map<String, List<ExpenseInfo>>>> = _monthlyExpense
+    private var _monthlyExpense = mutableStateOf(mapOf<String, List<Expense>>())
+    val monthlyExpense: State<Map<String, List<Expense>>> = _monthlyExpense
 
     private var _showInfoBanner: MutableState<Boolean> = mutableStateOf(false)
     val showInfoBanner: State<Boolean> = _showInfoBanner
@@ -56,6 +55,9 @@ class HomeViewModel @Inject constructor(
     private var decimal: String = String()
 
     var totalAmountPerDay = mutableStateOf(0.0)
+        private set
+
+    var totalAmountMonthly = mutableStateOf(0.0)
         private set
 
     var formattedDate: MutableState<String> = mutableStateOf(String())
@@ -69,30 +71,25 @@ class HomeViewModel @Inject constructor(
         formattedDate.value = Calendar.getInstance().time.getFormattedDate()
         date.value = currentDate
 
-        val countries = GetCurrencyUseCase().invoke()
-        Log.d("currencies", countries.toString())
-
         viewModelScope.launch(IO) {
             getDailyExpenseUseCase(currentDate).collect {
                 it?.let { expenses ->
-                    _dailyExpense.value = expenses.expenseList.reversed()
-                    totalAmountPerDay.value = String.format("%.2f", calculateExpense(dailyExpense.value)).toDouble()
+                    _dailyExpense.value = expenses.map { dailyExpense -> dailyExpense.toExpense() }.reversed()
+                    totalAmountPerDay.value =
+                        String.format("%.2f", calculateExpense(dailyExpense.value)).toDouble()
                 }
             }
         }
 
         viewModelScope.launch(IO) {
-            getMonthlyExpenseUseCase().collect {
-                val results = mutableListOf<Map<String, List<ExpenseInfo>>>()
-                it?.let { allExpense ->
-                    allExpense.reversed().forEach { dto ->
-                        val result = dto.expenseList.groupBy { info ->
-                            info.date.getFormattedDate()
-                        }
-                        results.add(result)
+            getMonthlyExpenseUseCase().collect { monthlyExpenses ->
+                monthlyExpenses?.let {
+                    val newMonthlyExpenses = monthlyExpenses.map { it.toExpense() }.reversed()
+                    _monthlyExpense.value = newMonthlyExpenses.groupBy { monthlyExpense ->
+                        monthlyExpense.date.getFormattedDate()
                     }
-
-                    _monthlyExpense.value = results
+                    totalAmountMonthly.value =
+                        String.format("%.2f", calculateExpense(newMonthlyExpenses)).toDouble()
                 }
             }
         }
@@ -112,7 +109,7 @@ class HomeViewModel @Inject constructor(
         return SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().time)
     }
 
-    fun calculateExpense(expenseInfo: List<ExpenseInfo>) : Double {
+    fun calculateExpense(expenseInfo: List<Expense>): Double {
         return expenseInfo.sumOf {
             it.amount
         }
@@ -140,17 +137,15 @@ class HomeViewModel @Inject constructor(
                 return@launch
             }
             val calendar = Calendar.getInstance()
-            val expenseInfo = ExpenseInfo(amount, calendar.time, expenseType)
+            val newExpense = ExpenseDto(calendar.time, date,amount, expenseType)
+            insertDailyExpenseUseCase(newExpense)
             val currentExpense = getDailyExpenseUseCase(date).firstOrNull()
-            if (currentExpense == null) {   // no current expense for the day
-                val newExpenseDto = ExpenseDto(date, calendar.time, listOf(expenseInfo))
-                insertDailyExpenseUseCase(newExpenseDto)
-                totalAmountPerDay.value = String.format("%.2f", calculateExpense(listOf(expenseInfo))).toDouble()
-            } else {
-                val newExpenseDto = ExpenseDto(date, calendar.time, currentExpense.expenseList + expenseInfo)
-                insertDailyExpenseUseCase(newExpenseDto)
+
+            currentExpense?.let {
                 totalAmountPerDay.value =
-                    String.format("%.2f", calculateExpense(currentExpense.expenseList + expenseInfo)).toDouble()
+                    String.format("%.2f", calculateExpense(it.map {
+                            dailyExpense -> dailyExpense.toExpense()
+                    })).toDouble()
             }
         }
     }

@@ -15,7 +15,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.javalon.xpensewhiz.presentation.ui.theme.InfoBannerBg
+import com.javalon.xpensewhiz.presentation.ui.theme.Amber
 import com.javalon.xpensewhiz.util.spacing
 
 @Composable
@@ -35,7 +35,7 @@ fun InfoBanner(shown: Boolean) {
     ) {
         Surface(
             modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.medium),
-            color = InfoBannerBg,
+            color = Amber,
             shape = RoundedCornerShape(16.dp),
             elevation = MaterialTheme.spacing.small
         ) {

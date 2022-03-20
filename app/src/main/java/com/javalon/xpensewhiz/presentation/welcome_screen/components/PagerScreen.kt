@@ -22,7 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import com.javalon.xpensewhiz.presentation.ui.theme.InfoBannerBg
+import com.javalon.xpensewhiz.presentation.ui.theme.GreenAlpha700
 import com.javalon.xpensewhiz.presentation.ui.theme.blueText
 import com.javalon.xpensewhiz.util.spacing
 
@@ -72,7 +72,7 @@ fun GetStartedButton(modifier: Modifier, pagerState: PagerState, onClick: () -> 
             modifier = modifier.fillMaxWidth(),
             visible = pagerState.currentPage == 2
         ) {
-            Button(onClick = { onClick() }, colors = ButtonDefaults.buttonColors(backgroundColor = InfoBannerBg)) {
+            Button(onClick = { onClick() }, colors = ButtonDefaults.buttonColors(backgroundColor = GreenAlpha700)) {
                 Text(
                     text = "Get started",
                     color = Color.White,

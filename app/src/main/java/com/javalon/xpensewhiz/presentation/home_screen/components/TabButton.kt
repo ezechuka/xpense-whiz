@@ -2,16 +2,12 @@ package com.javalon.xpensewhiz.presentation.home_screen.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
@@ -23,11 +19,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.javalon.xpensewhiz.presentation.home_screen.HomeViewModel
 import com.javalon.xpensewhiz.presentation.home_screen.TabButton
@@ -47,6 +40,14 @@ fun TabButton(
                 start = MaterialTheme.spacing.large,
                 end = MaterialTheme.spacing.large,
                 top = MaterialTheme.spacing.medium
+            )
+            .background(
+                color = Color.LightGray.copy(alpha = 0.6f),
+                shape = RoundedCornerShape(cornerRadius)
+            )
+            .padding(
+                start = MaterialTheme.spacing.medium,
+                end = MaterialTheme.spacing.medium
             ),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
@@ -56,82 +57,46 @@ fun TabButton(
         tabs.forEachIndexed { index, tab ->
             val backgroundColor by animateColorAsState(
                 if (selectedTab == tab) MaterialTheme.colors.onSurface
-                else MaterialTheme.colors.surface.copy(
-                    alpha = 0.1f
-            ), animationSpec = tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+                else Color.Transparent,
+                animationSpec = tween(durationMillis = 500, easing = LinearOutSlowInEasing)
+            )
 
             val textColor by animateColorAsState(
-                if (selectedTab == tab)  Color.White
+                if (selectedTab == tab) Color.White
                 else MaterialTheme.colors.onSurface,
-                animationSpec = tween(durationMillis = 500, easing = LinearOutSlowInEasing))
+                animationSpec = tween(durationMillis = 500, easing = LinearOutSlowInEasing)
+            )
 
             OutlinedButton(
                 onClick = {
                     homeViewModel.selectTabButton(tab)
                     onButtonClick()
                 },
-                modifier = when (index) {
-                    0 -> {
-                        if (selectedTab == tab) {
-                            Modifier
-                                .offset(0.dp, 0.dp)
-                                .zIndex(1f)
-                                .weight(1f)
-                        } else {
-                            Modifier
-                                .offset(0.dp, 0.dp)
-                                .zIndex(0f)
-                                .weight(1f)
-                        }
-                    }
-                    else -> {
-                        val offset = -1 * index
-                        if (selectedTab == tab) {
-                            Modifier
-                                .offset(offset.dp, 0.dp)
-                                .zIndex(1f)
-                                .weight(1f)
-                        } else {
-                            Modifier
-                                .offset(offset.dp, 0.dp)
-                                .zIndex(0f)
-                                .weight(1f)
-                        }
-                    }
-                },
+                modifier = Modifier
+                    .padding(horizontal = MaterialTheme.spacing.small)
+                    .weight(1f),
                 shape = when (index) {
                     0 -> RoundedCornerShape(
                         topStart = cornerRadius,
-                        topEnd = 0.dp,
+                        topEnd = cornerRadius,
                         bottomStart = cornerRadius,
-                        bottomEnd = 0.dp
+                        bottomEnd = cornerRadius
                     )
                     tabs.size - 1 -> RoundedCornerShape(
-                        topStart = 0.dp,
+                        topStart = cornerRadius,
                         topEnd = cornerRadius,
-                        bottomStart = 0.dp,
+                        bottomStart = cornerRadius,
                         bottomEnd = cornerRadius
                     )
                     else -> RoundedCornerShape(0.dp)
                 },
                 border = BorderStroke(
-                    1.dp, if (selectedTab == tab) {
-                        MaterialTheme.colors.onSurface
-                    } else {
-                        Color.DarkGray.copy(alpha = 0.75f)
-                    }
+                    0.dp, Color.Transparent
                 ),
-                colors = if (selectedTab == tab) {
-                    ButtonDefaults.outlinedButtonColors(
-                        backgroundColor = backgroundColor,
-                        contentColor = textColor
-                    )
-                } else {
-                    ButtonDefaults.outlinedButtonColors(
-                        backgroundColor = backgroundColor,
-                        contentColor = textColor
-                    )
-                }
+                colors = ButtonDefaults.outlinedButtonColors(
+                    backgroundColor = backgroundColor,
+                    contentColor = textColor
+                )
             ) {
                 Text(
                     text = tab.title,
@@ -142,7 +107,10 @@ fun TabButton(
                     },
                     style = MaterialTheme.typography.subtitle2,
                     modifier = Modifier
-                        .padding(horizontal = MaterialTheme.spacing.small, vertical = MaterialTheme.spacing.extraSmall)
+                        .padding(
+                            horizontal = MaterialTheme.spacing.small,
+                            vertical = MaterialTheme.spacing.extraSmall
+                        )
                         .align(Alignment.CenterVertically)
                 )
             }

@@ -38,7 +38,7 @@ import com.javalon.xpensewhiz.presentation.home_screen.components.ExpenseItem
 import com.javalon.xpensewhiz.presentation.home_screen.components.Header
 import com.javalon.xpensewhiz.presentation.home_screen.components.TabButton
 import com.javalon.xpensewhiz.presentation.home_screen.components.currencyFormat
-import com.javalon.xpensewhiz.presentation.ui.theme.InfoBannerBg
+import com.javalon.xpensewhiz.presentation.ui.theme.GreenAlpha700
 import com.javalon.xpensewhiz.util.spacing
 
 @ExperimentalFoundationApi
@@ -93,15 +93,18 @@ fun HomeScreen(
                         Text(
                             text = homeViewModel.formattedDate.value,
                             style = MaterialTheme.typography.body2,
-                            color = MaterialTheme.colors.onSurface,
+                            color = MaterialTheme.colors.surface,
                             modifier = Modifier
                                 .padding(vertical = MaterialTheme.spacing.small)
                                 .fillMaxWidth()
                                 .background(
-                                    InfoBannerBg.copy(alpha = 0.1f),
+                                    GreenAlpha700.copy(alpha = 0.9f),
                                     shape = RoundedCornerShape(8.dp)
                                 )
-                                .padding(MaterialTheme.spacing.small),
+                                .padding(
+                                    horizontal = MaterialTheme.spacing.medium,
+                                    vertical = MaterialTheme.spacing.small
+                                ),
                             textAlign = TextAlign.Start
                         )
                     }
@@ -126,44 +129,45 @@ fun HomeScreen(
                         end = MaterialTheme.spacing.large
                     )
                 ) {
-                    monthlyExpenses.forEach {
-                        it.forEach { (date, monthlyExpenses) ->
-                            stickyHeader {
-                                Row(
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .padding(vertical = MaterialTheme.spacing.small)
-                                        .fillMaxWidth()
-                                        .background(
-                                            InfoBannerBg.copy(alpha = 0.1f),
-                                            shape = RoundedCornerShape(8.dp)
-                                        )
-                                        .padding(MaterialTheme.spacing.small),
-                                ) {
-                                    Text(
-                                        text = date,
-                                        style = MaterialTheme.typography.body2,
-                                        color = MaterialTheme.colors.onSurface,
-                                        textAlign = TextAlign.Start
+                    monthlyExpenses.forEach { (date, monthlyExpenses) ->
+                        stickyHeader {
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .padding(vertical = MaterialTheme.spacing.small)
+                                    .fillMaxWidth()
+                                    .background(
+                                        GreenAlpha700.copy(alpha = 0.9f),
+                                        shape = RoundedCornerShape(8.dp)
                                     )
+                                    .padding(
+                                        horizontal = MaterialTheme.spacing.medium,
+                                        vertical = MaterialTheme.spacing.small
+                                    ),
+                            ) {
+                                Text(
+                                    text = date,
+                                    style = MaterialTheme.typography.body2,
+                                    color = Color.White,
+                                    textAlign = TextAlign.Start
+                                )
 
-                                    Text(
-                                        text = homeViewModel.calculateExpense(monthlyExpenses)
-                                            .toString().currencyFormat(),
-                                        style = MaterialTheme.typography.body2,
-                                        color = InfoBannerBg,
-                                        textAlign = TextAlign.Start
-                                    )
-                                }
-                            }
-
-                            items(monthlyExpenses.reversed()) { dailyExpenses ->
-                                ExpenseItem(
-                                    amount = dailyExpenses.amount,
-                                    expense = dailyExpenses.expenseType
+                                Text(
+                                    text = homeViewModel.calculateExpense(monthlyExpenses)
+                                        .toString().currencyFormat(),
+                                    style = MaterialTheme.typography.body2,
+                                    color = Color.White,
+                                    textAlign = TextAlign.Start
                                 )
                             }
+                        }
+
+                        items(monthlyExpenses) { dailyExpenses ->
+                            ExpenseItem(
+                                amount = dailyExpenses.amount,
+                                expense = dailyExpenses.expenseType
+                            )
                         }
                     }
                 }

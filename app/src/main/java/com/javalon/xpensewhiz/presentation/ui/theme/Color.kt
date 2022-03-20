@@ -19,4 +19,5 @@ val LightBlue3 = Color(0xff4fc3f7)
 val GridButtonWhite = Color(0xFFE2E7EF)
 val GridBorderGray = Color(0xFFBBCAD0)
 
-val InfoBannerBg = Color(0xFFFFC107)
+val Amber = Color(0xFFFFC107)
+val GreenAlpha700 = Color(0xFF00C853)

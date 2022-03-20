@@ -1,7 +1,6 @@
 package com.javalon.xpensewhiz.presentation.home_screen.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.javalon.xpensewhiz.presentation.home_screen.Expenses
-import com.javalon.xpensewhiz.presentation.ui.theme.InfoBannerBg
+import com.javalon.xpensewhiz.presentation.ui.theme.GreenAlpha700
 import com.javalon.xpensewhiz.presentation.ui.theme.LightBlue3
 import com.javalon.xpensewhiz.presentation.ui.theme.blueText
 import com.javalon.xpensewhiz.util.spacing
@@ -57,7 +56,7 @@ fun ExpenseItem(amount: Double, expense: String) {
             text = "$amount".currencyFormat(),
             style = MaterialTheme.typography.subtitle1,
             textAlign = TextAlign.End,
-            color = InfoBannerBg,
+            color = GreenAlpha700,
             modifier = Modifier
                 .weight(1f)
         )
