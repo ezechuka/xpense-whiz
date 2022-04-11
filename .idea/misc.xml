@@ -44,10 +44,31 @@
         <entry key="../../../../layout/compose-model-1647610462562.xml" value="0.16511824324324326" />
         <entry key="../../../../layout/compose-model-1647610646349.xml" value="0.25" />
         <entry key="../../../../layout/compose-model-1647612639189.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1647927709668.xml" value="0.5" />
+        <entry key="../../../../layout/compose-model-1648192582666.xml" value="0.67" />
+        <entry key="../../../../layout/compose-model-1648194820070.xml" value="1.3806818181818181" />
+        <entry key="../../../../layout/compose-model-1649140088070.xml" value="0.1" />
+        <entry key="../../../../layout/compose-model-1649228291011.xml" value="0.5" />
+        <entry key="../../../../layout/compose-model-1649295594652.xml" value="2.0" />
+        <entry key="../../../../layout/compose-model-1649295994524.xml" value="0.14919663351185922" />
+        <entry key="../../../../layout/compose-model-1649396623834.xml" value="2.0" />
+        <entry key="app/src/main/res/drawable/add_cat.xml" value="0.12129629629629629" />
         <entry key="app/src/main/res/drawable/add_entry.xml" value="0.20256410256410257" />
+        <entry key="app/src/main/res/drawable/blank_list.xml" value="0.20572916666666666" />
         <entry key="app/src/main/res/drawable/clear.xml" value="0.20256410256410257" />
+        <entry key="app/src/main/res/drawable/collapse.xml" value="0.20572916666666666" />
+        <entry key="app/src/main/res/drawable/edit.xml" value="0.15648148148148147" />
         <entry key="app/src/main/res/drawable/enter.xml" value="0.16296296296296298" />
+        <entry key="app/src/main/res/drawable/expense.xml" value="0.15833333333333333" />
+        <entry key="app/src/main/res/drawable/ic_streamline_icon_interface_arrows_button_down_double_32x32.xml" value="0.15648148148148147" />
+        <entry key="app/src/main/res/drawable/income.xml" value="0.15833333333333333" />
+        <entry key="app/src/main/res/drawable/insights.xml" value="0.1425925925925926" />
+        <entry key="app/src/main/res/drawable/main_home.xml" value="0.1425925925925926" />
         <entry key="app/src/main/res/drawable/plus.xml" value="0.18333333333333332" />
+        <entry key="app/src/main/res/drawable/remove.xml" value="0.20572916666666666" />
+        <entry key="app/src/main/res/drawable/school.xml" value="0.15185185185185185" />
+        <entry key="app/src/main/res/drawable/setting.xml" value="0.1425925925925926" />
+        <entry key="app/src/main/res/drawable/taxi.xml" value="0.1398148148148148" />
       </map>
     </option>
   </component>

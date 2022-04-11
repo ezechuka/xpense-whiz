@@ -3,94 +3,155 @@ package com.javalon.xpensewhiz.presentation.home_screen
 import android.annotation.SuppressLint
 import android.text.format.DateFormat
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.javalon.xpensewhiz.R
-import com.javalon.xpensewhiz.data.local.entity.ExpenseDto
-import com.javalon.xpensewhiz.domain.model.Expense
-import com.javalon.xpensewhiz.domain.usecase.read_database.GetDailyExpenseUseCase
-import com.javalon.xpensewhiz.domain.usecase.read_database.GetMonthlyExpenseUseCase
-import com.javalon.xpensewhiz.domain.usecase.write_database.InsertNewExpenseUseCase
+import com.javalon.xpensewhiz.common.Constants
+import com.javalon.xpensewhiz.data.local.entity.TransactionDto
+import com.javalon.xpensewhiz.domain.model.Transaction
+import com.javalon.xpensewhiz.domain.usecase.read_database.GetAccountUseCase
+import com.javalon.xpensewhiz.domain.usecase.read_database.GetAccountsUseCase
+import com.javalon.xpensewhiz.domain.usecase.read_database.GetCurrentDayExpTransactionUseCase
+import com.javalon.xpensewhiz.domain.usecase.read_database.GetDailyTransactionUseCase
+import com.javalon.xpensewhiz.domain.usecase.read_database.GetMonthlyTransactionUseCase
+import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetCurrencyUseCase
+import com.javalon.xpensewhiz.domain.usecase.write_database.InsertAccountsUseCase
+import com.javalon.xpensewhiz.domain.usecase.write_database.InsertNewTransactionUseCase
+import com.javalon.xpensewhiz.presentation.ui.theme.Amber
+import com.javalon.xpensewhiz.presentation.ui.theme.GreenAlpha700
+import com.javalon.xpensewhiz.presentation.ui.theme.Red500
+import com.javalon.xpensewhiz.presentation.ui.theme.businessBg
+import com.javalon.xpensewhiz.presentation.ui.theme.clothBg
+import com.javalon.xpensewhiz.presentation.ui.theme.electricBg
+import com.javalon.xpensewhiz.presentation.ui.theme.food_drink
+import com.javalon.xpensewhiz.presentation.ui.theme.gadgetBg
+import com.javalon.xpensewhiz.presentation.ui.theme.giftBg
+import com.javalon.xpensewhiz.presentation.ui.theme.groceryBg
+import com.javalon.xpensewhiz.presentation.ui.theme.healthBg
+import com.javalon.xpensewhiz.presentation.ui.theme.homeBg
+import com.javalon.xpensewhiz.presentation.ui.theme.leisureBg
+import com.javalon.xpensewhiz.presentation.ui.theme.miscBg
+import com.javalon.xpensewhiz.presentation.ui.theme.petBg
+import com.javalon.xpensewhiz.presentation.ui.theme.schBg
+import com.javalon.xpensewhiz.presentation.ui.theme.snackBg
+import com.javalon.xpensewhiz.presentation.ui.theme.subBg
+import com.javalon.xpensewhiz.presentation.ui.theme.taxiBg
+import com.javalon.xpensewhiz.presentation.ui.theme.travelBg
+import com.javalon.xpensewhiz.presentation.ui.theme.vehicleBg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val insertDailyExpenseUseCase: InsertNewExpenseUseCase,
-    private val getDailyExpenseUseCase: GetDailyExpenseUseCase,
-    private val getMonthlyExpenseUseCase: GetMonthlyExpenseUseCase
+    private val insertDailyTransactionUseCase: InsertNewTransactionUseCase,
+    private val insertAccountsUseCase: InsertAccountsUseCase,
+    private val getDailyTransactionUseCase: GetDailyTransactionUseCase,
+    private val getMonthlyTransactionUseCase: GetMonthlyTransactionUseCase,
+    private val getAccountUseCase: GetAccountUseCase,
+    private val getAccountsUseCase: GetAccountsUseCase,
+    private val getCurrencyUseCase: GetCurrencyUseCase,
+    private val getCurrentDayExpTransactionUseCase: GetCurrentDayExpTransactionUseCase
 ) : ViewModel() {
-    private var _tabButton = mutableStateOf(TabButton.TODAY)
-    val tabButton: State<TabButton> = _tabButton
+    private var _tabButton = MutableStateFlow(TabButton.TODAY)
+    val tabButton: StateFlow<TabButton> = _tabButton
 
-    private var _expense = mutableStateOf(Expenses.FOOD_DRINK)
-    val expense: State<Expenses> = _expense
+    private var _category = MutableStateFlow(Category.FOOD_DRINK)
+    val category: StateFlow<Category> = _category
 
-    private var _dialogState = mutableStateOf(false)
-    val dialogState: State<Boolean> = _dialogState
+    private var _account = MutableStateFlow(Account.CASH)
+    val account: StateFlow<Account> = _account
 
-    private var _expenseAmount = mutableStateOf("0.00")
-    val expenseAmount: State<String> = _expenseAmount
+    private var _transactionAmount = MutableStateFlow("0.00")
+    val transactionAmount: StateFlow<String> = _transactionAmount
 
-    private var _dailyExpense = mutableStateOf(emptyList<Expense>())
-    val dailyExpense: State<List<Expense>> = _dailyExpense
+    private var _dailyTransaction = MutableStateFlow(emptyList<Transaction>())
+    val dailyTransaction: StateFlow<List<Transaction>> = _dailyTransaction
 
-    private var _monthlyExpense = mutableStateOf(mapOf<String, List<Expense>>())
-    val monthlyExpense: State<Map<String, List<Expense>>> = _monthlyExpense
+    private var _monthlyTransaction = MutableStateFlow(mapOf<String, List<Transaction>>())
+    val monthlyTransaction: StateFlow<Map<String, List<Transaction>>> = _monthlyTransaction
 
-    private var _showInfoBanner: MutableState<Boolean> = mutableStateOf(false)
-    val showInfoBanner: State<Boolean> = _showInfoBanner
+    private var _transactionTitle = MutableStateFlow(String())
+    val transactionTitle: StateFlow<String> = _transactionTitle
 
-    private var _isDecimal = mutableStateOf(false)
+    private var _showInfoBanner = MutableStateFlow(false)
+    val showInfoBanner: StateFlow<Boolean> = _showInfoBanner
+
+    private var _isDecimal = MutableStateFlow(false)
     private var decimal: String = String()
 
-    var totalAmountPerDay = mutableStateOf(0.0)
+    var totalIncome = MutableStateFlow(0.0)
         private set
 
-    var totalAmountMonthly = mutableStateOf(0.0)
+    var totalExpense = MutableStateFlow(0.0)
         private set
 
-    var formattedDate: MutableState<String> = mutableStateOf(String())
+    var formattedDate = MutableStateFlow(String())
         private set
 
-    var date: MutableState<String> = mutableStateOf(String())
+    var date = MutableStateFlow(String())
+        private set
+
+    var currentTime = MutableStateFlow(Calendar.getInstance().time)
+        private set
+
+    var selectedCurrencyCode = MutableStateFlow(String())
         private set
 
     init {
         val currentDate = getDate()
-        formattedDate.value = Calendar.getInstance().time.getFormattedDate()
+        Log.d("date", currentDate)
+        formattedDate.value = currentTime.value.getFormattedDate()
         date.value = currentDate
+        currencyFormat()
 
         viewModelScope.launch(IO) {
-            getDailyExpenseUseCase(currentDate).collect {
+            getCurrentDayExpTransactionUseCase().collect {
+                val trx = it.map { trans -> trans.toTransaction() }
+                Log.d("current", trx.toString())
+            }
+        }
+
+        viewModelScope.launch(IO) {
+            getDailyTransactionUseCase(currentDate).collect {
                 it?.let { expenses ->
-                    _dailyExpense.value = expenses.map { dailyExpense -> dailyExpense.toExpense() }.reversed()
-                    totalAmountPerDay.value =
-                        String.format("%.2f", calculateExpense(dailyExpense.value)).toDouble()
+                    _dailyTransaction.value =
+                        expenses.map { dailyExpense -> dailyExpense.toTransaction() }.reversed()
                 }
             }
         }
 
         viewModelScope.launch(IO) {
-            getMonthlyExpenseUseCase().collect { monthlyExpenses ->
-                monthlyExpenses?.let {
-                    val newMonthlyExpenses = monthlyExpenses.map { it.toExpense() }.reversed()
-                    _monthlyExpense.value = newMonthlyExpenses.groupBy { monthlyExpense ->
+            getMonthlyTransactionUseCase().collect { allTransaction ->
+                allTransaction?.let {
+                    val newMonthlyExpenses = allTransaction.map { it.toTransaction() }.reversed()
+                    _monthlyTransaction.value = newMonthlyExpenses.groupBy { monthlyExpense ->
                         monthlyExpense.date.getFormattedDate()
                     }
-                    totalAmountMonthly.value =
-                        String.format("%.2f", calculateExpense(newMonthlyExpenses)).toDouble()
                 }
+            }
+        }
+
+        viewModelScope.launch(IO) {
+            getAccountsUseCase().collect { accountsDto ->
+                val accounts = accountsDto.map { it.toAccount() }
+                val income = calculateTransaction(accounts.map { it.income })
+                val expense = calculateTransaction(accounts.map { it.expense })
+                Log.d("INCOME", income.toString())
+
+                totalIncome.value = income
+                totalExpense.value = expense
             }
         }
     }
@@ -101,17 +162,17 @@ class HomeViewModel @Inject constructor(
         val monthAbbr = DateFormat.format("MMM", this)
         val year = DateFormat.format("yyyy", this)
 
-        return "$dayOfWeek $day, $monthAbbr $year"
+        return "$dayOfWeek $day, $monthAbbr"
     }
 
     @SuppressLint("SimpleDateFormat")
     private fun getDate(): String {
-        return SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().time)
+        return SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().time)
     }
 
-    fun calculateExpense(expenseInfo: List<Expense>): Double {
-        return expenseInfo.sumOf {
-            it.amount
+    private fun calculateTransaction(transactions: List<Double>): Double {
+        return transactions.sumOf {
+            it
         }
     }
 
@@ -119,15 +180,29 @@ class HomeViewModel @Inject constructor(
         _tabButton.value = button
     }
 
-    fun selectCategory(expense: Expenses) {
-        _expense.value = expense
+    fun selectCategory(category: Category) {
+        _category.value = category
     }
 
-    fun setDialogState(state: Boolean) {
-        _dialogState.value = state
+    fun selectAccount(account: Account) {
+        _account.value = account
     }
 
-    fun insertDailyExpense(date: String, amount: Double, expenseType: String) {
+    fun setTransactionTitle(title: String) {
+        _transactionTitle.value = title
+    }
+
+    fun setCurrentTime(time: Date) {
+        currentTime.value = time
+    }
+
+    fun insertDailyTransaction(
+        date: String,
+        amount: Double,
+        category: String,
+        transactionType: String,
+        transactionTitle: String
+    ) {
         Log.d("INFO", amount.toString())
         viewModelScope.launch(IO) {
             if (amount <= 0.0) {
@@ -136,28 +211,43 @@ class HomeViewModel @Inject constructor(
                 _showInfoBanner.value = false
                 return@launch
             }
-            val calendar = Calendar.getInstance()
-            val newExpense = ExpenseDto(calendar.time, date,amount, expenseType)
-            insertDailyExpenseUseCase(newExpense)
-            val currentExpense = getDailyExpenseUseCase(date).firstOrNull()
 
-            currentExpense?.let {
-                totalAmountPerDay.value =
-                    String.format("%.2f", calculateExpense(it.map {
-                            dailyExpense -> dailyExpense.toExpense()
-                    })).toDouble()
+            val newTransaction = TransactionDto(
+                currentTime.value,
+                date,
+                amount,
+                account.value.title,
+                category,
+                transactionType,
+                transactionTitle
+            )
+            insertDailyTransactionUseCase(newTransaction)
+
+            if (transactionType == Constants.INCOME) {
+                val currentAccount = getAccountUseCase(account.value.title).first()
+                Log.d("ACCOUNT", account.value.title)
+                val newIncomeAmount = currentAccount.income + amount
+                val balance = newIncomeAmount - currentAccount.expense
+
+                currentAccount.income = newIncomeAmount
+                currentAccount.balance = balance
+
+                insertAccountsUseCase(listOf(currentAccount))
+            } else {
+                val currentAccount = getAccountUseCase(account.value.title).first()
+                val newExpenseAmount = currentAccount.expense + amount
+                val balance = currentAccount.income - newExpenseAmount
+
+                currentAccount.expense = newExpenseAmount
+                currentAccount.balance = balance
+
+                insertAccountsUseCase(listOf(currentAccount))
             }
         }
     }
 
-    fun addToExpense(amount: Int) {
-        val newExpenseAmount =
-            String.format("%.2f", _expenseAmount.value.toDouble() + amount)
-        _expenseAmount.value = newExpenseAmount
-    }
-
-    fun setExpense(amount: String) {
-        val value = _expenseAmount.value
+    fun setTransaction(amount: String) {
+        val value = _transactionAmount.value
         val whole = value.substring(0, value.indexOf("."))
 
         if (amount == ".") {
@@ -172,19 +262,19 @@ class HomeViewModel @Inject constructor(
                 decimal += amount
             }
             val newDecimal = decimal.toDouble() / 100.0
-            _expenseAmount.value = String.format("%.2f", whole.toDouble() + newDecimal)
+            _transactionAmount.value = String.format("%.2f", whole.toDouble() + newDecimal)
             return
         }
 
         if (whole == "0") {
-            _expenseAmount.value = String.format("%.2f", amount.toDouble())
+            _transactionAmount.value = String.format("%.2f", amount.toDouble())
         } else {
-            _expenseAmount.value = String.format("%.2f", (whole + amount).toDouble())
+            _transactionAmount.value = String.format("%.2f", (whole + amount).toDouble())
         }
     }
 
     fun backspace() {
-        val value = _expenseAmount.value
+        val value = _transactionAmount.value
         var whole = value.substring(0, value.indexOf("."))
 
         if (value == "0.00") {
@@ -199,7 +289,7 @@ class HomeViewModel @Inject constructor(
                 "0"
             }
             val newDecimal = decimal.toDouble() / 100.0
-            _expenseAmount.value = String.format("%.2f", whole.toDouble() + newDecimal)
+            _transactionAmount.value = String.format("%.2f", whole.toDouble() + newDecimal)
             decimal = String()
 
             return
@@ -209,30 +299,128 @@ class HomeViewModel @Inject constructor(
             "0"
         else
             whole.substring(0, whole.length - 1)
-        _expenseAmount.value = String.format("%.2f", whole.toDouble())
+        _transactionAmount.value = String.format("%.2f", whole.toDouble())
     }
+
+    fun displayTransaction(
+        transactionDate: String?,
+        transactionPos: Int?,
+        transactionStatus: Int?
+    ) {
+        if (transactionPos != -1 && transactionStatus != -1) {
+            val transaction = if (transactionStatus == 0)
+                dailyTransaction.value[transactionPos!!]
+            else {
+                transactionDate?.let {
+                    monthlyTransaction.value[it]!![transactionPos!!]
+                }
+            }
+
+            setTransactionTitle(transaction!!.title)
+            currentTime.value = transaction.date
+            Account.values().forEach {
+                if (it.title == transaction.account)
+                    selectAccount(it)
+                return@forEach
+            }
+            _transactionAmount.value = transaction.amount.toString()
+            Category.values().forEach {
+                if (it.title == transaction.category)
+                    selectCategory(it)
+            }
+        }
+    }
+
+    fun updateTransaction(transactionDate: String?, transactionPos: Int?, transactionStatus: Int?) {
+        if (transactionPos != -1 && transactionStatus != -1) {
+            val transaction = if (transactionStatus == 0)
+                dailyTransaction.value[transactionPos!!]
+            else {
+                transactionDate?.let {
+                    monthlyTransaction.value[it]!![transactionPos!!]
+                }
+            }
+            viewModelScope.launch(IO) {
+                if (transactionAmount.value.toDouble() != transaction!!.amount) {   // new amount
+
+                    val currentAccount = getAccountUseCase(account.value.title).first()
+                    if (transaction.transactionType == TransactionType.INCOME.title) {
+                        currentAccount.income = currentAccount.income - transaction.amount
+                        currentAccount.income =
+                            currentAccount.income + transactionAmount.value.toDouble()
+                    } else {
+                        currentAccount.expense = currentAccount.expense - transaction.amount
+                        currentAccount.expense =
+                            currentAccount.expense + transactionAmount.value.toDouble()
+                    }
+                    insertAccountsUseCase(listOf(currentAccount))
+                }
+                val updateTransaction = TransactionDto(
+                    transaction.date,
+                    transaction.dateOfEntry,
+                    transactionAmount.value.toDouble(),
+                    account.value.title,
+                    category.value.title,
+                    transaction.transactionType,
+                    transactionTitle.value
+                )
+                insertDailyTransactionUseCase(updateTransaction)
+            }
+        }
+    }
+
+    private fun currencyFormat() {
+        viewModelScope.launch(IO) {
+            val selectedCurrency = stringPreferencesKey(Constants.CURRENCY_KEY)
+            getCurrencyUseCase().collect { selectedCurrencyPref ->
+                val currencyCode = selectedCurrencyPref[selectedCurrency] ?: ""
+                selectedCurrencyCode.value = currencyCode
+            }
+        }
+    }
+}
+
+fun String.amountFormat() : String {
+    val amountFormatter = DecimalFormat("#,##0.00")
+    return " " + amountFormatter.format(this.toDouble())
 }
 
 enum class TabButton(val title: String) {
     TODAY("Today"), MONTH("Month")
 }
 
-enum class Expenses(val title: String, val iconRes: Int) {
-    FOOD_DRINK("Food & Drink", R.drawable.food),
-    CLOTHING("Clothing", R.drawable.clothing),
-    HOME("Home", R.drawable.home),
-    HEALTH("Health", R.drawable.health),
-    SCHOOL("School", R.drawable.school),
-    GROCERY("Grocery", R.drawable.grocery),
-    ELECTRICITY("Electricity", R.drawable.electricity),
-    BUSINESS("Business", R.drawable.business),
-    VEHICLE("Vehicle", R.drawable.vehicle),
-    TAXI("Taxi", R.drawable.taxi),
-    GADGET("Gadget", R.drawable.gadget),
-    TRAVEL("Travel", R.drawable.travel),
-    SUBSCRIPTION("Subscription", R.drawable.sub),
-    PET("Pet", R.drawable.pet),
-    SNACK("Snack", R.drawable.snack),
-    GIFT("Gift", R.drawable.gift),
-    MISC("Miscellaneous", R.drawable.misc)
+enum class TransactionType(val title: String) {
+    INCOME("income"), EXPENSE("expense")
+}
+
+enum class Account(val title: String, val iconRes: Int, val color: Color) {
+    CASH("Cash", R.drawable.cash, Amber),
+    BANK("Bank", R.drawable.bank, GreenAlpha700),
+    CARD("Card", R.drawable.credit_card, Red500)
+}
+
+enum class Category(
+    val title: String,
+    val iconRes: Int,
+    val bgRes: Color,
+    val colorRes: Color = Color.White
+) {
+    FOOD_DRINK("Food & Drink", R.drawable.drink, food_drink, Color.Black),
+    CLOTHING("Clothing", R.drawable.clothing, clothBg, Color.Black),
+    HOME("Home", R.drawable.home, homeBg, Color.Black),
+    HEALTH("Health", R.drawable.health, healthBg),
+    SCHOOL("School", R.drawable.school, schBg),
+    GROCERY("Grocery", R.drawable.grocery, groceryBg, Color.Black),
+    ELECTRICITY("Electricity", R.drawable.electricity, electricBg, Color.Black),
+    BUSINESS("Business", R.drawable.business, businessBg, Color.Black),
+    VEHICLE("Vehicle", R.drawable.vehicle, vehicleBg),
+    TAXI("Taxi", R.drawable.taxi, taxiBg),
+    LEISURE("Leisure", R.drawable.leisure, leisureBg, Color.Black),
+    GADGET("Gadget", R.drawable.gadget, gadgetBg),
+    TRAVEL("Travel", R.drawable.travel, travelBg, Color.Black),
+    SUBSCRIPTION("Subscription", R.drawable.sub, subBg),
+    PET("Pet", R.drawable.pet, petBg, Color.Black),
+    SNACK("Snack", R.drawable.snack, snackBg, Color.Black),
+    GIFT("Gift", R.drawable.gift, giftBg, Color.Black),
+    MISC("Miscellaneous", R.drawable.misc, miscBg)
 }

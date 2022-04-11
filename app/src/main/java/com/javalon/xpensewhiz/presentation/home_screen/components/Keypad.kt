@@ -6,7 +6,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -24,6 +25,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.javalon.xpensewhiz.R
 import com.javalon.xpensewhiz.presentation.home_screen.HomeViewModel
 import com.javalon.xpensewhiz.presentation.ui.theme.GridBorderGray
@@ -42,13 +45,17 @@ import kotlinx.coroutines.launch
 @ExperimentalComposeUiApi
 @Composable
 fun KeypadComponent(
-    homeViewModel: HomeViewModel,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
+    homeViewModel: HomeViewModel = hiltViewModel(),
     onKeyClick: (String) -> Unit
 ) {
     val scope = rememberCoroutineScope()
 
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.5f)
+    ) {
         val (keyNine, keyEight, keySeven, keyClear) = createRefs()
         val (keyFour, keyFive, keySix, keyEnter) = createRefs()
         val (keyOne, keyTwo, keyThree) = createRefs()
@@ -138,7 +145,7 @@ fun KeypadComponent(
 
         // First Row
         Button(
-            onClick = {  },
+            onClick = { },
             modifier = Modifier
                 .scale(scale7.value)
                 .constrainAs(keySeven) {
@@ -423,15 +430,8 @@ fun KeypadComponent(
                         MotionEvent.ACTION_DOWN -> {
                             selectedButtonEnter.value = true
                             homeViewModel.apply {
-                                insertDailyExpense(
-                                    date.value,
-                                    expenseAmount.value.toDouble(),
-                                    expense.value.title
-                                )
-                                if (expenseAmount.value.toDouble() > 0.0) {
-                                    scope.launch {
-                                        bottomSheetScaffoldState.bottomSheetState.collapse()
-                                    }
+                                scope.launch {
+                                    bottomSheetScaffoldState.bottomSheetState.collapse()
                                 }
                             }
                         }
@@ -451,7 +451,7 @@ fun KeypadComponent(
             border = BorderStroke(0.25.dp, GridBorderGray.copy(alpha = 0.85f))
         ) {
             Icon(
-                painter = painterResource(R.drawable.enter),
+                painter = painterResource(R.drawable.collapse),
                 contentDescription = "enter",
                 tint = Color.White.copy(alpha = 0.95f)
             )
@@ -647,6 +647,7 @@ fun KeypadComponent(
             Text(
                 text = ".",
                 style = MaterialTheme.typography.subtitle1.copy(fontSize = 17.sp),
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.onSurface,
             )
         }

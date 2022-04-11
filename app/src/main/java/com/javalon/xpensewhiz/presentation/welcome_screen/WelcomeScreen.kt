@@ -16,6 +16,8 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import com.javalon.xpensewhiz.presentation.navigation.Screen
+import com.javalon.xpensewhiz.presentation.ui.theme.Amber
+import com.javalon.xpensewhiz.presentation.ui.theme.blueText
 import com.javalon.xpensewhiz.presentation.welcome_screen.components.GetStartedButton
 import com.javalon.xpensewhiz.presentation.welcome_screen.components.PagerScreen
 
@@ -47,12 +49,14 @@ fun WelcomeScreen(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .weight(1f),
-            indicatorWidth = 12.dp,
-            indicatorHeight = 4.dp
+            indicatorWidth = 18.dp,
+            indicatorHeight = 4.dp,
+            activeColor = Amber,
+            inactiveColor = blueText.copy(alpha = 0.1f)
         )
         GetStartedButton(pagerState = pagerState, modifier = Modifier.weight(2f)) {
             navController.popBackStack()
-            navController.navigate(Screen.CurrencyScreen.route)
+            navController.navigate("${Screen.CurrencyScreen.route}/${false}")
         }
     }
 }

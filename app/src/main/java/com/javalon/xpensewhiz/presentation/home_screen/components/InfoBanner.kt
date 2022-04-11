@@ -15,11 +15,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.javalon.xpensewhiz.presentation.home_screen.TransactionType
 import com.javalon.xpensewhiz.presentation.ui.theme.Amber
 import com.javalon.xpensewhiz.util.spacing
 
 @Composable
-fun InfoBanner(shown: Boolean) {
+fun InfoBanner(shown: Boolean, transactionType: TransactionType) {
     AnimatedVisibility(
         visible = shown,
         enter = slideInVertically(
@@ -40,7 +41,7 @@ fun InfoBanner(shown: Boolean) {
             elevation = MaterialTheme.spacing.small
         ) {
             Text(
-                text = "Invalid expense amount",
+                text = "Invalid ${transactionType.title} amount",
                 modifier = Modifier.padding(16.dp)
             )
         }

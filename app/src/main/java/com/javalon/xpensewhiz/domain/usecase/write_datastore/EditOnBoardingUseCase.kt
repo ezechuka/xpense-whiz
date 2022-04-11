@@ -5,6 +5,6 @@ import javax.inject.Inject
 
 class EditOnBoardingUseCase @Inject constructor(private val datastoreRepository: DatastoreRepository) {
     suspend operator fun invoke(completed: Boolean) {
-        datastoreRepository.writeToDataStore(completed)
+        datastoreRepository.writeOnboardingKeyToDataStore(completed)
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,16 +34,17 @@ fun TabButton(
     onButtonClick: () -> Unit = { },
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
+    val selectedTab by homeViewModel.tabButton.collectAsState()
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                start = MaterialTheme.spacing.large,
-                end = MaterialTheme.spacing.large,
-                top = MaterialTheme.spacing.medium
+                start = MaterialTheme.spacing.medium,
+                end = MaterialTheme.spacing.medium,
+                top = MaterialTheme.spacing.small
             )
             .background(
-                color = Color.LightGray.copy(alpha = 0.6f),
+                color = Color.DarkGray.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(cornerRadius)
             )
             .padding(
@@ -52,7 +54,6 @@ fun TabButton(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val selectedTab by homeViewModel.tabButton
 
         tabs.forEachIndexed { index, tab ->
             val backgroundColor by animateColorAsState(
@@ -73,7 +74,7 @@ fun TabButton(
                     onButtonClick()
                 },
                 modifier = Modifier
-                    .padding(horizontal = MaterialTheme.spacing.small)
+                    .padding(vertical = MaterialTheme.spacing.extraSmall)
                     .weight(1f),
                 shape = when (index) {
                     0 -> RoundedCornerShape(

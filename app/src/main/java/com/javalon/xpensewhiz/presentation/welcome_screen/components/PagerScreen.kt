@@ -4,10 +4,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
@@ -20,11 +20,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import com.javalon.xpensewhiz.presentation.ui.theme.GreenAlpha700
+import com.javalon.xpensewhiz.presentation.ui.theme.ButtonBlue
 import com.javalon.xpensewhiz.presentation.ui.theme.blueText
-import com.javalon.xpensewhiz.util.spacing
 
 @Composable
 fun PagerScreen(page: OnBoardingPage) {
@@ -72,12 +72,15 @@ fun GetStartedButton(modifier: Modifier, pagerState: PagerState, onClick: () -> 
             modifier = modifier.fillMaxWidth(),
             visible = pagerState.currentPage == 2
         ) {
-            Button(onClick = { onClick() }, colors = ButtonDefaults.buttonColors(backgroundColor = GreenAlpha700)) {
+            Button(
+                onClick = { onClick() },
+                colors = ButtonDefaults.buttonColors(backgroundColor = ButtonBlue),
+                contentPadding = PaddingValues(vertical = 12.dp)
+            ) {
                 Text(
                     text = "Get started",
                     color = Color.White,
-                    style = MaterialTheme.typography.subtitle1,
-                    modifier = Modifier.padding(vertical = MaterialTheme.spacing.extraSmall)
+                    style = MaterialTheme.typography.subtitle1
                 )
             }
         }

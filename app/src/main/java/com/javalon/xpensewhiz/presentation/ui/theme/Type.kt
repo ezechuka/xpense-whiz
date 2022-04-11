@@ -11,20 +11,25 @@ import com.javalon.xpensewhiz.R
 val Manrope = FontFamily(
     Font(R.font.manrope_regular),
     Font(R.font.manrope_medium, FontWeight.W500),
-    Font(R.font.manrope_bold, FontWeight.Bold)
+    Font(R.font.manrope_bold, FontWeight.Bold),
+    Font(R.font.manrope_extrabold, FontWeight.ExtraBold)
 )
 
 // Set of Material typography styles to start with
 val typography = Typography(
-    h4 = TextStyle(
-        fontFamily = Manrope,
-        fontWeight = FontWeight.W600,
-        fontSize = 30.sp
+    h2 = TextStyle(
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 36.sp
     ),
     h3 = TextStyle(
         fontFamily = Manrope,
         fontWeight = FontWeight.W500,
-        fontSize = 30.sp
+        fontSize = 24.sp
+    ),
+    h4 = TextStyle(
+        fontFamily = Manrope,
+        fontWeight = FontWeight.W600,
+        fontSize = 22.sp
     ),
     h5 = TextStyle(
         fontFamily = Manrope,

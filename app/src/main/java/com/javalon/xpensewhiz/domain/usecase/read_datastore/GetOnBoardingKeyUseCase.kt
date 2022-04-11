@@ -7,6 +7,6 @@ import javax.inject.Inject
 
 class GetOnBoardingKeyUseCase @Inject constructor(private val datastoreRepository: DatastoreRepository) {
     operator fun invoke() : Flow<Boolean> = flow {
-        emit(datastoreRepository.readFromDataStore())
+        emit(datastoreRepository.readOnboardingKeyFromDataStore())
     }
 }
