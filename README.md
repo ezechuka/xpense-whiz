@@ -1,4 +1,5 @@
 # Xpense Whiz - Money tracker app with Compose.
+Xpense Whiz is a money tracker app that keeps track of monetary activities i.e. income & expenses. Built with simple UI and taking lots of consideration on the UX to ensure that the core feature is achieved with minimal clicks.
 <p>
     <img src="https://github.com/ezechuka/xpense-whiz/blob/main/asset/asset_1.png" width="200px" height="auto" />
     <img src="https://github.com/ezechuka/xpense-whiz/blob/main/asset/asset_2.png" width="200px" height="auto" hspace="10"/>
