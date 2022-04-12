@@ -1,9 +1,9 @@
 # Xpense Whiz - Money tracker app with Compose.
 <p>
-    <img src="https://github.com/ezechuka/xpense-whiz/blob/main/asset/asset_1.png" width="200px" height="auto" />
-    <img src="https://github.com/ezechuka/xpense-whiz/blob/main/asset/asset_2.png" width="200px" height="auto" hspace="10"/>
-    <img src="https://github.com/ezechuka/xpense-whiz/blob/main/asset/asset_3.png" width="200px" height="auto"/>
-    <img src="https://github.com/ezechuka/xpense-whiz/blob/main/asset/asset_4.png" width="200px" height="auto" hspace="10"/>
+    <img src="https://github.com/ezechuka/xpense-whiz/blob/main/asset/asset_1.png" width="150px" height="auto" />
+    <img src="https://github.com/ezechuka/xpense-whiz/blob/main/asset/asset_2.png" width="150px" height="auto" hspace="10"/>
+    <img src="https://github.com/ezechuka/xpense-whiz/blob/main/asset/asset_3.png" width="150px" height="auto"/>
+    <img src="https://github.com/ezechuka/xpense-whiz/blob/main/asset/asset_4.png" width="150px" height="auto" hspace="10"/>
 </p>
 
 <p>
