@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.javalon.xpensewhiz.presentation.home_screen.TransactionType
-import com.javalon.xpensewhiz.presentation.ui.theme.Amber
+import com.javalon.xpensewhiz.presentation.ui.theme.Amber500
 import com.javalon.xpensewhiz.util.spacing
 
 @Composable
@@ -36,7 +36,7 @@ fun InfoBanner(shown: Boolean, transactionType: TransactionType) {
     ) {
         Surface(
             modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.medium),
-            color = Amber,
+            color = Amber500,
             shape = RoundedCornerShape(16.dp),
             elevation = 1.dp
         ) {

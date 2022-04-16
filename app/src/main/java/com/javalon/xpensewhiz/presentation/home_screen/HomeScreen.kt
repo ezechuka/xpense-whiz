@@ -38,7 +38,7 @@ import com.javalon.xpensewhiz.presentation.home_screen.components.ListPlaceholde
 import com.javalon.xpensewhiz.presentation.home_screen.components.TabButton
 import com.javalon.xpensewhiz.presentation.home_screen.components.TransactionItem
 import com.javalon.xpensewhiz.presentation.navigation.Screen
-import com.javalon.xpensewhiz.presentation.ui.theme.Amber
+import com.javalon.xpensewhiz.presentation.ui.theme.Amber500
 import com.javalon.xpensewhiz.util.spacing
 
 @ExperimentalFoundationApi
@@ -136,7 +136,7 @@ fun HomeScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
                                     .background(
-                                        Amber.copy(alpha = 0.02f),
+                                        Amber500.copy(alpha = 0.02f),
                                         shape = RoundedCornerShape(24.dp)
                                     )
                                     .padding(

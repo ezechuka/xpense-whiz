@@ -65,8 +65,7 @@ import com.javalon.xpensewhiz.presentation.home_screen.components.AccountTag
 import com.javalon.xpensewhiz.presentation.home_screen.components.Category
 import com.javalon.xpensewhiz.presentation.home_screen.components.InfoBanner
 import com.javalon.xpensewhiz.presentation.home_screen.components.KeypadComponent
-import com.javalon.xpensewhiz.presentation.ui.theme.Amber
-import com.javalon.xpensewhiz.presentation.ui.theme.ButtonAnalogBlue
+import com.javalon.xpensewhiz.presentation.ui.theme.Amber500
 import com.javalon.xpensewhiz.util.spacing
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -172,7 +171,7 @@ fun TransactionScreen(
                         },
                         modifier = Modifier
                             .scale(0.8f)
-                            .background(ButtonAnalogBlue, CircleShape)
+                            .background(MaterialTheme.colors.primary, CircleShape)
 
                     ) {
                         Icon(
@@ -286,7 +285,7 @@ fun TransactionScreen(
                                 start = MaterialTheme.spacing.medium,
                                 top = MaterialTheme.spacing.small
                             ),
-                        colors = ButtonDefaults.textButtonColors(Amber.copy(alpha = 0.8f)),
+                        colors = ButtonDefaults.textButtonColors(Amber500.copy(alpha = 0.8f)),
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(
                             horizontal = MaterialTheme.spacing.medium,

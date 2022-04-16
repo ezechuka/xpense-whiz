@@ -45,7 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.javalon.xpensewhiz.R
 import com.javalon.xpensewhiz.presentation.home_screen.HomeViewModel
 import com.javalon.xpensewhiz.presentation.home_screen.amountFormat
-import com.javalon.xpensewhiz.presentation.ui.theme.Amber
+import com.javalon.xpensewhiz.presentation.ui.theme.Amber500
 import com.javalon.xpensewhiz.presentation.ui.theme.GreenAlpha700
 import com.javalon.xpensewhiz.presentation.ui.theme.Red500
 import com.javalon.xpensewhiz.util.spacing
@@ -109,7 +109,7 @@ fun Header(
                         top.linkTo(parent.top, margin = small)
                         end.linkTo(parent.end, margin = medium)
                     },
-                    colors = ButtonDefaults.buttonColors(Amber.copy(alpha = 0.9f)),
+                    colors = ButtonDefaults.buttonColors(Amber500.copy(alpha = 0.9f)),
                     shape = RoundedCornerShape(24.dp)
                 )
                 {

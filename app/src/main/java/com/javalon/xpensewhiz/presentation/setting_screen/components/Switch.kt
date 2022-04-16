@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,7 +18,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.javalon.xpensewhiz.presentation.ui.theme.ButtonAnalogBlue
 
 @Composable
 fun Switch(
@@ -26,7 +26,7 @@ fun Switch(
     scale: Float = 2f,
     width: Dp = 28.dp,
     height: Dp = 16.dp,
-    checkedTrackColor: Color = ButtonAnalogBlue,
+    checkedTrackColor: Color = MaterialTheme.colors.primary,
     uncheckedTrackColor: Color = Color.DarkGray.copy(alpha = 0.5f),
     thumbColor: Color = Color.White,
     gapBetweenThumbAndTrackEdge: Dp = 1.5.dp,

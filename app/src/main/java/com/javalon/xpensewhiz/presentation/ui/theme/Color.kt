@@ -4,26 +4,20 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 val LightBlue500 = Color(0xFF03A9F4)
-
 val Grey100 = Color(0xFFF5F5F5)
 val DeepPurple900 = Color(0xFF311B92)
 val DeepPurple300 = Color(0xFF9575CD)
 val Indigo900 = Color(0xFF1A237E)
-val White = Color(0xFFFFFFFF)
-val Black = Color(0xFF000000)
-
-val LightBlue3 = Color(0xff4fc3f7)
-
-val GridButtonWhite = Color(0xFFE2E7EF)
-val GridBorderGray = Color(0xFFBBCAD0)
-
-val Amber = Color(0xFFFFC107)
+val Amber500 = Color(0xFFFFC107)
 val GreenAlpha700 = Color(0xFF00C853)
 val Green200 = Color(0xFFc8e6c9)
 val Red500 = Color(0xFFf44336)
 val Red200 = Color(0xFFEF9A9A)
-val ButtonBlue = Color(0xFF006AF6)
-val ButtonAnalogBlue = Color(0xFF35B1E3)
+val White = Color(0xFFFFFFFF)
+val Black = Color(0xFF000000)
+
+val GridButtonWhite = Color(0xFFE2E7EF)
+val GridBorderGray = Color(0xFFBBCAD0)
 
 val food_drink = Color(0xFF86DEB7)
 val healthBg = Color(0xFF235789)

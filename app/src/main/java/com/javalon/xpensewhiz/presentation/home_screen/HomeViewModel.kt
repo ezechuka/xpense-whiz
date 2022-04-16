@@ -19,7 +19,7 @@ import com.javalon.xpensewhiz.domain.usecase.read_database.GetMonthlyTransaction
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetCurrencyUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.InsertAccountsUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.InsertNewTransactionUseCase
-import com.javalon.xpensewhiz.presentation.ui.theme.Amber
+import com.javalon.xpensewhiz.presentation.ui.theme.Amber500
 import com.javalon.xpensewhiz.presentation.ui.theme.GreenAlpha700
 import com.javalon.xpensewhiz.presentation.ui.theme.Red500
 import com.javalon.xpensewhiz.presentation.ui.theme.businessBg
@@ -394,7 +394,7 @@ enum class TransactionType(val title: String) {
 }
 
 enum class Account(val title: String, val iconRes: Int, val color: Color) {
-    CASH("Cash", R.drawable.cash, Amber),
+    CASH("Cash", R.drawable.cash, Amber500),
     BANK("Bank", R.drawable.bank, GreenAlpha700),
     CARD("Card", R.drawable.credit_card, Red500)
 }
