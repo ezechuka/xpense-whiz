@@ -15,20 +15,23 @@ import com.javalon.xpensewhiz.util.WindowInfo
 import com.javalon.xpensewhiz.util.rememberWindowInfo
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = Indigo900,
+    secondary = Indigo900,
+    background = DeepPurple900,
+    surface = DeepPurple300,
+    onSurface = White,
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onBackground = Color.White
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200,
-
-    background = blueBGDay,
-    surface = cardBGDay,
-    onSurface = blueText,
-    onPrimary = Color.White,
+    primary = LightBlue500,
+    secondary = LightBlue500,
+    background = Grey100,
+    surface = White,
+    onSurface = Black,
+    onPrimary = Color.Black,
     onSecondary = Color.Black,
     onBackground = Color.Black
 )

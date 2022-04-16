@@ -47,7 +47,7 @@ fun ReminderSetting(
     ) {
         Text(
             text = "Limit Reminder",
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.button,
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Start
         )

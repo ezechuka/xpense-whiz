@@ -1,7 +1,6 @@
 package com.javalon.xpensewhiz.presentation.welcome_screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,8 +18,10 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material.contentColorFor
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
@@ -38,16 +39,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.javalon.xpensewhiz.domain.model.CurrencyModel
 import com.javalon.xpensewhiz.presentation.navigation.Screen
-import com.javalon.xpensewhiz.presentation.ui.theme.ButtonAnalogBlue
-import com.javalon.xpensewhiz.presentation.ui.theme.ButtonBlue
 import com.javalon.xpensewhiz.presentation.ui.theme.Manrope
 import com.javalon.xpensewhiz.util.spacing
 import kotlinx.coroutines.launch
@@ -79,128 +76,128 @@ fun CurrencyScreen(
             )
         },
         scaffoldState = bottomSheetScaffoldState,
-        sheetPeekHeight = 0.dp,
-        sheetContentColor = MaterialTheme.colors.background,
+        sheetPeekHeight = 0.dp
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background)
-                .padding(bottom = it.calculateBottomPadding()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-
-            Card(elevation = 1.dp) {
-                Text(
-                    text = "Set currency",
-                    style = MaterialTheme.typography.h2,
-                    color = MaterialTheme.colors.onSurface,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = MaterialTheme.spacing.medium,
-                            end = MaterialTheme.spacing.medium,
-                            top = MaterialTheme.spacing.small
-                        ),
-                    letterSpacing = TextUnit(0.2f, TextUnitType.Sp),
-                    textAlign = TextAlign.Start
-                )
-            }
-
-            LazyColumn(
+        Surface(color = MaterialTheme.colors.background) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = it.calculateBottomPadding()),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(bottom = it.calculateBottomPadding())
             ) {
-                currencies.forEach { (firstChar, list) ->
-                    stickyHeader {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .background(MaterialTheme.colors.background)
-                                .padding(
-                                    start = MaterialTheme.spacing.medium,
-                                    end = MaterialTheme.spacing.medium,
-                                    top = MaterialTheme.spacing.medium
-                                )
-                        ) {
-                            Text(
-                                text = firstChar.toString(),
-                                style = MaterialTheme.typography.subtitle1,
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                textAlign = TextAlign.Start
-                            )
-                        }
-                    }
 
-                    items(list) { currency ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .clickable {
-                                    selectedCountry = if (selectedCountry != currency) {
-                                        coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
-                                        currency
-                                    } else {
-                                        coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.collapse() }
-                                        CurrencyModel()
-                                    }
+                Card(elevation = 1.dp) {
+                    Text(
+                        text = "Set currency",
+                        style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.W700),
+                        color = MaterialTheme.colors.onBackground,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = MaterialTheme.spacing.medium,
+                                end = MaterialTheme.spacing.medium,
+                                top = MaterialTheme.spacing.small
+                            ),
+                        textAlign = TextAlign.Start
+                    )
+                }
+
+                LazyColumn(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(bottom = it.calculateBottomPadding())
+                ) {
+                    currencies.forEach { (firstChar, list) ->
+                        stickyHeader {
+                            Surface(color = MaterialTheme.colors.background) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .padding(
+                                            start = MaterialTheme.spacing.medium,
+                                            end = MaterialTheme.spacing.medium,
+                                            top = MaterialTheme.spacing.medium
+                                        )
+                                ) {
+                                    Text(
+                                        text = firstChar.toString(),
+                                        style = MaterialTheme.typography.subtitle1,
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        textAlign = TextAlign.Start
+                                    )
                                 }
-                                .fillMaxWidth()
-                                .padding(
-                                    horizontal = MaterialTheme.spacing.medium,
-                                    vertical = MaterialTheme.spacing.small
-                                )
-                        ) {
-                            TextButton(
-                                onClick = {
-                                    selectedCountry = if (selectedCountry != currency) {
-                                        coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
-                                        currency
-                                    } else {
-                                        coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.collapse() }
-                                        CurrencyModel()
-                                    }
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = if (selectedCountry == currency)
-                                        ButtonAnalogBlue
-                                    else Color.DarkGray.copy(alpha = 0.1f),
-                                    contentColor = if (selectedCountry == currency)
-                                        MaterialTheme.colors.surface
-                                    else MaterialTheme.colors.onSurface
-                                ),
-                                shape = RoundedCornerShape(8.dp),
-                                contentPadding = PaddingValues(20.dp)
-                            ) {
-                                Text(
-                                    text = buildAnnotatedString {
-                                        withStyle(
-                                            style = SpanStyle(
-                                                fontWeight = FontWeight.W600,
-                                                fontFamily = Manrope,
-                                                fontSize = 14.sp
-                                            )
-                                        ) {
-                                            append(currency.country.uppercase())
-                                        }
+                            }
+                        }
 
-                                        withStyle(
-                                            style = SpanStyle(
-                                                color = Color.DarkGray.copy(alpha = 0.5f),
-                                                fontWeight = FontWeight.Normal,
-                                                fontFamily = Manrope,
-                                                fontSize = 14.sp
-                                            )
-                                        ) {
-                                            append(" (${currency.currencyCode})")
+                        items(list) { currency ->
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .clickable {
+                                        selectedCountry = if (selectedCountry != currency) {
+                                            coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
+                                            currency
+                                        } else {
+                                            coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.collapse() }
+                                            CurrencyModel()
+                                        }
+                                    }
+                                    .fillMaxWidth()
+                                    .padding(
+                                        horizontal = MaterialTheme.spacing.medium,
+                                        vertical = MaterialTheme.spacing.small
+                                    )
+                            ) {
+                                TextButton(
+                                    onClick = {
+                                        selectedCountry = if (selectedCountry != currency) {
+                                            coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
+                                            currency
+                                        } else {
+                                            coroutineScope.launch { bottomSheetScaffoldState.bottomSheetState.collapse() }
+                                            CurrencyModel()
                                         }
                                     },
-                                    style = MaterialTheme.typography.subtitle2,
                                     modifier = Modifier.fillMaxWidth(),
-                                    textAlign = TextAlign.Start
-                                )
+                                    colors = ButtonDefaults.buttonColors(
+                                        backgroundColor = if (selectedCountry == currency)
+                                            MaterialTheme.colors.primary
+                                        else Color.DarkGray.copy(alpha = 0.1f),
+                                        contentColor = if (selectedCountry == currency)
+                                            contentColorFor(backgroundColor = MaterialTheme.colors.primary)
+                                        else MaterialTheme.colors.onSurface
+                                    ),
+                                    shape = RoundedCornerShape(8.dp),
+                                    contentPadding = PaddingValues(20.dp)
+                                ) {
+                                    Text(
+                                        text = buildAnnotatedString {
+                                            withStyle(
+                                                style = SpanStyle(
+                                                    fontWeight = FontWeight.W600,
+                                                    fontFamily = Manrope,
+                                                    fontSize = 14.sp
+                                                )
+                                            ) {
+                                                append(currency.country.uppercase())
+                                            }
+
+                                            withStyle(
+                                                style = SpanStyle(
+                                                    color = Color.DarkGray.copy(alpha = 0.5f),
+                                                    fontWeight = FontWeight.Normal,
+                                                    fontFamily = Manrope,
+                                                    fontSize = 14.sp
+                                                )
+                                            ) {
+                                                append(" (${currency.currencyCode})")
+                                            }
+                                        },
+                                        style = MaterialTheme.typography.subtitle2,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Start
+                                    )
+                                }
                             }
                         }
                     }
@@ -211,12 +208,20 @@ fun CurrencyScreen(
 }
 
 @Composable
-fun ContinueButton(currency: CurrencyModel, setting: Boolean?, navController: NavController, welcomeViewModel: WelcomeViewModel) {
+fun ContinueButton(
+    currency: CurrencyModel,
+    setting: Boolean?,
+    navController: NavController,
+    welcomeViewModel: WelcomeViewModel
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = MaterialTheme.spacing.medium, vertical = MaterialTheme.spacing.small)
+            .padding(
+                horizontal = MaterialTheme.spacing.medium,
+                vertical = MaterialTheme.spacing.small
+            )
     ) {
         Button(
             onClick = {
@@ -232,13 +237,15 @@ fun ContinueButton(currency: CurrencyModel, setting: Boolean?, navController: Na
             },
             modifier = Modifier
                 .fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(backgroundColor = ButtonBlue),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colors.primary,
+                contentColor = contentColorFor(backgroundColor = MaterialTheme.colors.primary)
+            ),
             contentPadding = PaddingValues(vertical = 12.dp)
         ) {
             Text(
                 text = "SET",
-                color = Color.White,
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.button
             )
         }
     }

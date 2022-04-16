@@ -3,18 +3,15 @@ package com.javalon.xpensewhiz.presentation.ui.theme
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
+val LightBlue500 = Color(0xFF03A9F4)
 
-val blueBGDay = Color(0xFFF4F7FD)
-val cardBGDay = Color(0xFFFFFFFF)
+val Grey100 = Color(0xFFF5F5F5)
+val DeepPurple900 = Color(0xFF311B92)
+val DeepPurple300 = Color(0xFF9575CD)
+val Indigo900 = Color(0xFF1A237E)
+val White = Color(0xFFFFFFFF)
+val Black = Color(0xFF000000)
 
-val blueText = Color(0xFF000000)
-
-val LightBlue1 = Color(0xffb3e5fc)
-val LightBlue2 = Color(0xff81d4fa)
 val LightBlue3 = Color(0xff4fc3f7)
 
 val GridButtonWhite = Color(0xFFE2E7EF)
@@ -55,9 +52,4 @@ val incomeGradient = Brush.horizontalGradient(
 val expenseGradient = Brush.horizontalGradient(
     0.0f to Red500,
     0.95f to Red200
-)
-
-val AmberGradient = Brush.horizontalGradient(
-    0.0f to Amber,
-    0.95f to Color.DarkGray.copy(alpha = 0.8f)
 )

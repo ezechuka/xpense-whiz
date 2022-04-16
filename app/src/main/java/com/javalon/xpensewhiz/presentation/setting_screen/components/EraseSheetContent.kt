@@ -43,11 +43,11 @@ fun EraseContent(
         val context = LocalContext.current
         Text(
             text = "ERASE DATA",
-            style = MaterialTheme.typography.subtitle1
+            style = MaterialTheme.typography.subtitle2
         )
         Text(
             text = "You're about to erase all transactions on this app. This cannot be reversed",
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.body2,
             textAlign = TextAlign.Center,
             color = Color.DarkGray.copy(alpha = 0.5f),
             modifier = Modifier.padding(top = MaterialTheme.spacing.medium)
@@ -70,7 +70,7 @@ fun EraseContent(
         ) {
             Text(
                 text = "CONTINUE",
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.button
             )
         }
 
@@ -88,7 +88,7 @@ fun EraseContent(
         ) {
             Text(
                 text = "CANCEL",
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.button
             )
         }
     }

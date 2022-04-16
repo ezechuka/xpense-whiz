@@ -12,10 +12,10 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,8 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
-import com.javalon.xpensewhiz.presentation.ui.theme.ButtonBlue
-import com.javalon.xpensewhiz.presentation.ui.theme.blueText
 
 @Composable
 fun PagerScreen(page: OnBoardingPage) {
@@ -46,14 +44,14 @@ fun PagerScreen(page: OnBoardingPage) {
             text = page.title,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            style = MaterialTheme.typography.h6,
-            color = blueText,
+            style = MaterialTheme.typography.body1,
+            color = MaterialTheme.colors.onBackground,
             modifier = Modifier.fillMaxWidth()
         )
         Text(
             text = page.description,
             textAlign = TextAlign.Center,
-            color = blueText,
+            color = MaterialTheme.colors.onBackground,
             style = MaterialTheme.typography.body2,
             modifier = Modifier.fillMaxWidth(.7f)
         )
@@ -74,13 +72,15 @@ fun GetStartedButton(modifier: Modifier, pagerState: PagerState, onClick: () -> 
         ) {
             Button(
                 onClick = { onClick() },
-                colors = ButtonDefaults.buttonColors(backgroundColor = ButtonBlue),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = MaterialTheme.colors.primary,
+                    contentColor = contentColorFor(backgroundColor = MaterialTheme.colors.primary)
+                ),
                 contentPadding = PaddingValues(vertical = 12.dp)
             ) {
                 Text(
                     text = "Get started",
-                    color = Color.White,
-                    style = MaterialTheme.typography.subtitle1
+                    style = MaterialTheme.typography.button
                 )
             }
         }

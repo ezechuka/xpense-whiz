@@ -1,6 +1,5 @@
 package com.javalon.xpensewhiz.presentation.setting_screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
@@ -13,6 +12,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -24,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
@@ -79,63 +80,62 @@ fun SettingScreen(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.background)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-
-                Text(
-                    text = "Settings",
-                    style = MaterialTheme.typography.h2,
-                    color = MaterialTheme.colors.onSurface,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = MaterialTheme.spacing.medium,
-                            vertical = MaterialTheme.spacing.small
-                        ),
-                    letterSpacing = TextUnit(0.2f, TextUnitType.Sp),
-                    textAlign = TextAlign.Start
-                )
-
+            Surface(color = MaterialTheme.colors.background) {
                 Column(
                     modifier = Modifier
-                        .verticalScroll(rememberScrollState())
+                        .fillMaxSize()
                 ) {
-
-                    CurrencySetting(currency, navController)
-
-                    LimitSetting(modalBottomSheetState, scope) {
-                        sheetRankState.value = it
-                    }
-
-                    ReminderSetting()
-
-                    EraseSetting(modalBottomSheetState, scope) {
-                        sheetRankState.value = it
-                    }
-
                     Text(
-                        text = "App",
-                        style = MaterialTheme.typography.subtitle1,
-                        color = Color.DarkGray.copy(alpha = 0.8f),
+                        text = "Settings",
+                        style = MaterialTheme.typography.h4.copy(fontWeight = FontWeight.W700),
+                        color = MaterialTheme.colors.onSurface,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
                                 horizontal = MaterialTheme.spacing.medium,
-                                vertical = MaterialTheme.spacing.medium
+                                vertical = MaterialTheme.spacing.small
                             ),
-                        letterSpacing = TextUnit(0.2f, TextUnitType.Sp),
                         textAlign = TextAlign.Start
                     )
 
-                    RateSetting()
+                    Column(
+                        modifier = Modifier
+                            .verticalScroll(rememberScrollState())
+                    ) {
 
-                    PrivacySetting()
+                        CurrencySetting(currency, navController)
 
-                    VersionSetting()
+                        LimitSetting(modalBottomSheetState, scope) {
+                            sheetRankState.value = it
+                        }
+
+                        ReminderSetting()
+
+                        EraseSetting(modalBottomSheetState, scope) {
+                            sheetRankState.value = it
+                        }
+
+                        Text(
+                            text = "App",
+                            style = MaterialTheme.typography.subtitle1,
+                            color = Color.DarkGray.copy(alpha = 0.8f),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = MaterialTheme.spacing.medium,
+                                    vertical = MaterialTheme.spacing.medium
+                                ),
+                            letterSpacing = TextUnit(0.2f, TextUnitType.Sp),
+                            textAlign = TextAlign.Start
+                        )
+
+                        RateSetting()
+
+                        PrivacySetting()
+
+                        VersionSetting()
+                    }
                 }
             }
         }

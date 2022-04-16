@@ -5,13 +5,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.javalon.xpensewhiz.util.spacing
@@ -44,11 +46,11 @@ fun VersionSetting() {
             textAlign = TextAlign.Start
         )
 
-        Text(
-            text = "1.0.0",
-            style = MaterialTheme.typography.subtitle1,
-            fontWeight = FontWeight.ExtraLight,
-            color = Color.DarkGray.copy(alpha = 0.5f)
-        )
+        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+            Text(
+                text = "1.0.0",
+                style = MaterialTheme.typography.subtitle2
+            )
+        }
     }
 }

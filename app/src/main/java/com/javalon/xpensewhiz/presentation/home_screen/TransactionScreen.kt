@@ -121,7 +121,8 @@ fun TransactionScreen(
                 .padding(bottom = it.calculateBottomPadding())
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
             ) {
                 Row(
                     modifier = Modifier
@@ -229,13 +230,13 @@ fun TransactionScreen(
                                 text = if (transactionType == TransactionType.INCOME)
                                     "Income title"
                                 else "Expense title",
-                                style = MaterialTheme.typography.h3.copy(fontWeight = FontWeight.ExtraBold)
+                                style = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.W600)
                             )
                         },
-                        textStyle = MaterialTheme.typography.h3.copy(fontWeight = FontWeight.ExtraBold),
+                        textStyle = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.W600),
                         colors = TextFieldDefaults.textFieldColors(
-                            focusedIndicatorColor = ButtonAnalogBlue,
-                            cursorColor = ButtonAnalogBlue,
+                            focusedIndicatorColor = MaterialTheme.colors.primary,
+                            cursorColor = MaterialTheme.colors.primary,
                             backgroundColor = Color.LightGray
                         )
                     )

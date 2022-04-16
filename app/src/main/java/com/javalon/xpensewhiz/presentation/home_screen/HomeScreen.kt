@@ -26,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.ExperimentalUnitApi
@@ -136,7 +135,6 @@ fun HomeScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
-
                                     .background(
                                         Amber.copy(alpha = 0.02f),
                                         shape = RoundedCornerShape(24.dp)
@@ -148,8 +146,8 @@ fun HomeScreen(
                             ) {
                                 Text(
                                     text = date,
-                                    style = MaterialTheme.typography.body1,
-                                    color = Color.Black,
+                                    style = MaterialTheme.typography.body2,
+                                    color = MaterialTheme.colors.onBackground,
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Start
                                 )

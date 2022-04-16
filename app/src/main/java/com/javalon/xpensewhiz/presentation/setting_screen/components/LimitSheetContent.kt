@@ -21,6 +21,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,7 +41,6 @@ import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.javalon.xpensewhiz.R
 import com.javalon.xpensewhiz.presentation.setting_screen.SettingViewModel
-import com.javalon.xpensewhiz.presentation.ui.theme.ButtonAnalogBlue
 import com.javalon.xpensewhiz.util.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -62,7 +62,7 @@ fun LimitContent(
     ) {
         Text(
             text = "SET LIMIT",
-            style = MaterialTheme.typography.subtitle1
+            style = MaterialTheme.typography.subtitle2
         )
 
         TextField(
@@ -81,13 +81,13 @@ fun LimitContent(
             placeholder = {
                 Text(
                     text = "Amount",
-                    style = MaterialTheme.typography.subtitle1
+                    style = MaterialTheme.typography.subtitle2
                 )
             },
-            textStyle = MaterialTheme.typography.subtitle1,
+            textStyle = MaterialTheme.typography.subtitle2,
             colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = ButtonAnalogBlue,
-                cursorColor = ButtonAnalogBlue,
+                focusedIndicatorColor = MaterialTheme.colors.primary,
+                cursorColor = MaterialTheme.colors.primary,
                 backgroundColor = Color.LightGray
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -113,11 +113,12 @@ fun LimitContent(
                 .onGloballyPositioned {
                     size = it.size.toSize()
                 },
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = selectedLimit,
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.subtitle2,
                 modifier = Modifier.weight(1f)
             )
 
@@ -143,7 +144,7 @@ fun LimitContent(
                     }) {
                         Text(
                             text = label,
-                            style = MaterialTheme.typography.subtitle1,
+                            style = MaterialTheme.typography.subtitle2,
                             color = Color.Gray
                         )
                     }
@@ -162,14 +163,14 @@ fun LimitContent(
                 .fillMaxWidth()
                 .padding(top = MaterialTheme.spacing.medium),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = ButtonAnalogBlue,
-                contentColor = Color.White
+                backgroundColor = MaterialTheme.colors.primary,
+                contentColor = contentColorFor(backgroundColor = MaterialTheme.colors.primary)
             ),
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
             Text(
                 text = "SET",
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.button
             )
         }
 
@@ -187,7 +188,7 @@ fun LimitContent(
         ) {
             Text(
                 text = "CANCEL",
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.button
             )
         }
     }

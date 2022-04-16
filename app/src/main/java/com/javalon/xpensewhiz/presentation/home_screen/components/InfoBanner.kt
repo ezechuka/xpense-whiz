@@ -38,11 +38,12 @@ fun InfoBanner(shown: Boolean, transactionType: TransactionType) {
             modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.medium),
             color = Amber,
             shape = RoundedCornerShape(16.dp),
-            elevation = MaterialTheme.spacing.small
+            elevation = 1.dp
         ) {
             Text(
                 text = "Invalid ${transactionType.title} amount",
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
+                style = MaterialTheme.typography.subtitle2
             )
         }
     }

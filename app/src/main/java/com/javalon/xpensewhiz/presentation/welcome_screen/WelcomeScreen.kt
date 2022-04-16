@@ -1,13 +1,14 @@
 package com.javalon.xpensewhiz.presentation.welcome_screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -16,8 +17,6 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 import com.javalon.xpensewhiz.presentation.navigation.Screen
-import com.javalon.xpensewhiz.presentation.ui.theme.Amber
-import com.javalon.xpensewhiz.presentation.ui.theme.blueText
 import com.javalon.xpensewhiz.presentation.welcome_screen.components.GetStartedButton
 import com.javalon.xpensewhiz.presentation.welcome_screen.components.PagerScreen
 
@@ -30,33 +29,36 @@ fun WelcomeScreen(
     val pages by welcomeViewModel.listOfPages
     val pagerState = rememberPagerState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Surface(
+        color = MaterialTheme.colors.background
     ) {
-        HorizontalPager(
-            count = 3,
-            state = pagerState,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(10f)
-        ) { pageCount ->
-            PagerScreen(page = pages[pageCount])
-        }
-        HorizontalPagerIndicator(
-            pagerState = pagerState,
+        Column(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .weight(1f),
-            indicatorWidth = 18.dp,
-            indicatorHeight = 4.dp,
-            activeColor = Amber,
-            inactiveColor = blueText.copy(alpha = 0.1f)
-        )
-        GetStartedButton(pagerState = pagerState, modifier = Modifier.weight(2f)) {
-            navController.popBackStack()
-            navController.navigate("${Screen.CurrencyScreen.route}/${false}")
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            HorizontalPager(
+                count = 3,
+                state = pagerState,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(10f)
+            ) { pageCount ->
+                PagerScreen(page = pages[pageCount])
+            }
+            HorizontalPagerIndicator(
+                pagerState = pagerState,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .weight(1f),
+                indicatorWidth = 18.dp,
+                indicatorHeight = 4.dp,
+                activeColor = MaterialTheme.colors.primary,
+                inactiveColor = Color.LightGray
+            )
+            GetStartedButton(pagerState = pagerState, modifier = Modifier.weight(2f)) {
+                navController.popBackStack()
+                navController.navigate("${Screen.CurrencyScreen.route}/${false}")
+            }
         }
     }
 }

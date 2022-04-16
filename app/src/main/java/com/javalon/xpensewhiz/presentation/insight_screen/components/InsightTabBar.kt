@@ -1,8 +1,6 @@
 package com.javalon.xpensewhiz.presentation.insight_screen.components
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,8 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,50 +32,51 @@ fun InsightTabBar(
     insightViewModel: InsightViewModel = hiltViewModel()
 ) {
     val selectedTab by insightViewModel.tabButton.collectAsState()
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = Color.DarkGray.copy(alpha = 0.1f),
-                shape = RoundedCornerShape(cornerRadius)
-            )
-            .padding(
-                start = MaterialTheme.spacing.medium,
-                end = MaterialTheme.spacing.medium
-            ),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+    Surface(
+        color = Color.DarkGray.copy(alpha = 0.1f),
+        shape = RoundedCornerShape(cornerRadius)
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = MaterialTheme.spacing.medium,
+                    end = MaterialTheme.spacing.medium
+                ),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
-        InsightBar(
-            modifier = Modifier.weight(1f),
-            cornerRadius = cornerRadius,
-            onTabClick = {
-                insightViewModel.selectTabButton(TransactionType.INCOME)
-            },
-            title = "Income",
-            backgroundColor = animateColorAsState(
-                targetValue = if (selectedTab == TransactionType.INCOME)
-                    GreenAlpha700 else Color.Transparent
-            ).value,
-            textColor = if (selectedTab == TransactionType.INCOME)
-                Color.White else Color.Black
-        )
+            InsightBar(
+                modifier = Modifier.weight(1f),
+                cornerRadius = cornerRadius,
+                onTabClick = {
+                    insightViewModel.selectTabButton(TransactionType.INCOME)
+                },
+                title = "Income",
+                backgroundColor = animateColorAsState(
+                    targetValue = if (selectedTab == TransactionType.INCOME)
+                        GreenAlpha700 else Color.Transparent
+                ).value,
+                textColor = if (selectedTab == TransactionType.INCOME)
+                    Color.White else Color.Black
+            )
 
-        InsightBar(
-            modifier = Modifier.weight(1f),
-            cornerRadius = cornerRadius,
-            onTabClick = {
-                insightViewModel.selectTabButton(TransactionType.EXPENSE)
-            },
-            title = "Expense",
-            backgroundColor = animateColorAsState(
-                targetValue = if (selectedTab == TransactionType.EXPENSE)
-                    Red500 else Color.Transparent
-            ).value,
-            textColor = if (selectedTab == TransactionType.EXPENSE)
-                Color.White else Color.Black
-        )
+            InsightBar(
+                modifier = Modifier.weight(1f),
+                cornerRadius = cornerRadius,
+                onTabClick = {
+                    insightViewModel.selectTabButton(TransactionType.EXPENSE)
+                },
+                title = "Expense",
+                backgroundColor = animateColorAsState(
+                    targetValue = if (selectedTab == TransactionType.EXPENSE)
+                        Red500 else Color.Transparent
+                ).value,
+                textColor = if (selectedTab == TransactionType.EXPENSE)
+                    Color.White else Color.Black
+            )
+        }
     }
 }
 
@@ -89,19 +89,11 @@ fun InsightBar(
     backgroundColor: Color,
     textColor: Color
 ) {
-    OutlinedButton(
+    TextButton(
         onClick = onTabClick,
         modifier = modifier
             .padding(vertical = MaterialTheme.spacing.extraSmall),
-        shape = RoundedCornerShape(
-            topStart = cornerRadius,
-            topEnd = cornerRadius,
-            bottomStart = cornerRadius,
-            bottomEnd = cornerRadius
-        ),
-        border = BorderStroke(
-            0.dp, Color.Transparent
-        ),
+        shape = RoundedCornerShape(cornerRadius),
         colors = ButtonDefaults.outlinedButtonColors(
             backgroundColor = backgroundColor,
             contentColor = textColor
@@ -110,7 +102,7 @@ fun InsightBar(
         Text(
             text = title,
             color = textColor,
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.subtitle2,
             modifier = Modifier
                 .padding(
                     horizontal = MaterialTheme.spacing.small,

@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.javalon.xpensewhiz.common.Constants
 import com.javalon.xpensewhiz.domain.model.Transaction
@@ -41,7 +40,11 @@ import com.javalon.xpensewhiz.util.spacing
 @ExperimentalMaterialApi
 @ExperimentalUnitApi
 @Composable
-fun TransactionItem(transaction: Transaction, homeViewModel: HomeViewModel = hiltViewModel(), onItemClick: () -> Unit) {
+fun TransactionItem(
+    transaction: Transaction,
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    onItemClick: () -> Unit
+) {
     val category = getCategory(transaction.category)
     val currencyCode by homeViewModel.selectedCurrencyCode.collectAsState()
 
@@ -50,8 +53,9 @@ fun TransactionItem(transaction: Transaction, homeViewModel: HomeViewModel = hil
 
     Card(
         onClick = {
-           onItemClick()
+            onItemClick()
         },
+        backgroundColor = Color.DarkGray.copy(alpha = 0.1f),
         elevation = 0.dp,
         shape = RoundedCornerShape(24.dp),
         modifier = Modifier
@@ -63,7 +67,6 @@ fun TransactionItem(transaction: Transaction, homeViewModel: HomeViewModel = hil
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.DarkGray.copy(alpha = 0.1f))
                 .padding(
                     horizontal = MaterialTheme.spacing.medium,
                     vertical = MaterialTheme.spacing.small
@@ -77,7 +80,7 @@ fun TransactionItem(transaction: Transaction, homeViewModel: HomeViewModel = hil
 
                 Text(
                     text = category.title,
-                    style = MaterialTheme.typography.subtitle2,
+                    style = MaterialTheme.typography.button,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .background(
@@ -94,7 +97,7 @@ fun TransactionItem(transaction: Transaction, homeViewModel: HomeViewModel = hil
 
                 Text(
                     text = transaction.account,
-                    style = MaterialTheme.typography.subtitle2,
+                    style = MaterialTheme.typography.button,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .background(
@@ -125,7 +128,7 @@ fun TransactionItem(transaction: Transaction, homeViewModel: HomeViewModel = hil
                     tint = Color.Black,
                     modifier = Modifier
                         .background(
-                            Color.LightGray,
+                            Color.DarkGray.copy(alpha = 0.2f),
                             RoundedCornerShape(8.dp)
                         )
                         .padding(18.dp)
@@ -135,7 +138,7 @@ fun TransactionItem(transaction: Transaction, homeViewModel: HomeViewModel = hil
                     if (transaction.title.isNotEmpty()) {
                         Text(
                             text = transaction.title,
-                            style = MaterialTheme.typography.subtitle1,
+                            style = MaterialTheme.typography.body2,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -148,7 +151,7 @@ fun TransactionItem(transaction: Transaction, homeViewModel: HomeViewModel = hil
                         color = if (transaction.transactionType == Constants.INCOME)
                             GreenAlpha700
                         else Red500.copy(alpha = 0.75f),
-                        style = MaterialTheme.typography.h6.copy(fontSize = 18.sp),
+                        style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.W600),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

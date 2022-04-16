@@ -15,67 +15,83 @@ val Manrope = FontFamily(
     Font(R.font.manrope_extrabold, FontWeight.ExtraBold)
 )
 
-// Set of Material typography styles to start with
 val typography = Typography(
+    h1 = TextStyle(
+        fontFamily = Manrope,
+        fontWeight = FontWeight.Light,
+        fontSize = 95.sp,
+        letterSpacing = (-1.5).sp
+    ),
     h2 = TextStyle(
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 36.sp
+        fontFamily = Manrope,
+        fontWeight = FontWeight.Light,
+        fontSize = 59.sp,
+        letterSpacing = (-0.5).sp
     ),
     h3 = TextStyle(
         fontFamily = Manrope,
-        fontWeight = FontWeight.W500,
-        fontSize = 24.sp
+        fontWeight = FontWeight.Normal,
+        fontSize = 48.sp,
+        letterSpacing = 0.sp
     ),
     h4 = TextStyle(
         fontFamily = Manrope,
-        fontWeight = FontWeight.W600,
-        fontSize = 22.sp
+        fontWeight = FontWeight.Normal,
+        fontSize = 34.sp,
+        letterSpacing = 0.25.sp
     ),
     h5 = TextStyle(
         fontFamily = Manrope,
-        fontWeight = FontWeight.W600,
-        fontSize = 24.sp
+        fontWeight = FontWeight.Medium,
+        fontSize = 24.sp,
+        letterSpacing = 0.sp
     ),
     h6 = TextStyle(
         fontFamily = Manrope,
-        fontWeight = FontWeight.W600,
-        fontSize = 20.sp
+        fontWeight = FontWeight.Medium,
+        fontSize = 20.sp,
+        letterSpacing = 0.15.sp
     ),
     subtitle1 = TextStyle(
         fontFamily = Manrope,
-        fontWeight = FontWeight.W500,
-        fontSize = 16.sp
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        letterSpacing = 0.15.sp
     ),
     subtitle2 = TextStyle(
         fontFamily = Manrope,
-        fontWeight = FontWeight.W500,
-        fontSize = 14.sp
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        letterSpacing = 0.1.sp
     ),
     body1 = TextStyle(
         fontFamily = Manrope,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
+        fontSize = 16.sp,
+        letterSpacing = 0.5.sp
     ),
     body2 = TextStyle(
         fontFamily = Manrope,
+        fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        fontWeight = FontWeight.Medium,
-        lineHeight = 20.sp
+        letterSpacing = 0.25.sp
     ),
     button = TextStyle(
         fontFamily = Manrope,
-        fontWeight = FontWeight.W500,
-        fontSize = 14.sp
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp,
+        letterSpacing = 1.25.sp
     ),
     caption = TextStyle(
         fontFamily = Manrope,
         fontWeight = FontWeight.Normal,
-        fontSize = 12.sp
+        fontSize = 12.sp,
+        letterSpacing = 0.4.sp
     ),
     overline = TextStyle(
         fontFamily = Manrope,
-        fontWeight = FontWeight.W500,
-        fontSize = 12.sp
-
+        fontWeight = FontWeight.Normal,
+        fontSize = 10.sp,
+        letterSpacing = 1.5.sp
     )
 )

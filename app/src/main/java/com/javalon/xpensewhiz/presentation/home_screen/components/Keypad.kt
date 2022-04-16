@@ -38,7 +38,6 @@ import com.javalon.xpensewhiz.R
 import com.javalon.xpensewhiz.presentation.home_screen.HomeViewModel
 import com.javalon.xpensewhiz.presentation.ui.theme.GridBorderGray
 import com.javalon.xpensewhiz.presentation.ui.theme.GridButtonWhite
-import com.javalon.xpensewhiz.presentation.ui.theme.LightBlue3
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
@@ -443,7 +442,7 @@ fun KeypadComponent(
                     true
                 },
             shape = MaterialTheme.shapes.large,
-            colors = ButtonDefaults.buttonColors(LightBlue3),
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colors.primary),
             elevation = ButtonDefaults.elevation(
                 defaultElevation = 0.dp,
                 pressedElevation = 0.5.dp
