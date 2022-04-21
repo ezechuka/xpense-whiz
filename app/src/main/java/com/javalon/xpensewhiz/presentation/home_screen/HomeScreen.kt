@@ -135,10 +135,6 @@ fun HomeScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
-                                    .background(
-                                        Amber500.copy(alpha = 0.02f),
-                                        shape = RoundedCornerShape(24.dp)
-                                    )
                                     .padding(
                                         horizontal = MaterialTheme.spacing.medium,
                                         vertical = MaterialTheme.spacing.small

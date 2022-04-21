@@ -62,7 +62,6 @@ fun Header(
     val coroutineScope = rememberCoroutineScope()
 
     val currentDate by homeViewModel.formattedDate.collectAsState()
-    val currentTab by homeViewModel.tabButton.collectAsState()
     val totalIncome by homeViewModel.totalIncome.collectAsState()
     val totalExpense by homeViewModel.totalExpense.collectAsState()
     val currencyCode by homeViewModel.selectedCurrencyCode.collectAsState()

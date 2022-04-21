@@ -11,6 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.javalon.xpensewhiz.presentation.account_screen.AccountDetailScreen
+import com.javalon.xpensewhiz.presentation.account_screen.AccountScreen
 import com.javalon.xpensewhiz.presentation.home_screen.HomeScreen
 import com.javalon.xpensewhiz.presentation.home_screen.TransactionScreen
 import com.javalon.xpensewhiz.presentation.insight_screen.InsightScreen
@@ -40,7 +42,10 @@ fun MainNavigation(
                 }
             )
         ) { entry ->
-            CurrencyScreen(navController = navController, setting = entry.arguments?.getBoolean("setting"))
+            CurrencyScreen(
+                navController = navController,
+                setting = entry.arguments?.getBoolean("setting")
+            )
         }
         composable(route = Screen.HomeScreen.route) {
             HomeScreen(navController = navController)
@@ -78,7 +83,18 @@ fun MainNavigation(
             InsightScreen()
         }
         composable(route = Screen.AccountScreen.route) {
-
+            AccountScreen(navController = navController)
+        }
+        composable(
+            route = "${Screen.AccountDetailScreen.route}/{accountType}",
+            arguments = listOf(
+                navArgument("accountType") {
+                    type = NavType.StringType
+                    defaultValue = "Cash"
+                    nullable = true
+                })
+        ) { entry ->
+            AccountDetailScreen(entry.arguments?.getString("accountType"))
         }
         composable(route = Screen.SettingScreen.route) {
             SettingScreen(navController = navController)

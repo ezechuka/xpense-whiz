@@ -12,6 +12,8 @@ interface TransactionRepository {
 
     fun getDailyTransaction(entryDate: String) : Flow<List<TransactionDto>>
 
+    fun getTransactionByAccount(accountType: String): Flow<List<TransactionDto>>
+
     fun getAccount(account: String): Flow<AccountDto>
 
     fun getAccounts(): Flow<List<AccountDto>>
@@ -26,15 +28,15 @@ interface TransactionRepository {
 
     fun getMonthlyExpTransaction(): Flow<List<TransactionDto>>
 
-    fun get3DayTransaction(transaction_type: String): Flow<List<TransactionDto>>
+    fun get3DayTransaction(transactionType: String): Flow<List<TransactionDto>>
 
-    fun get7DayTransaction(transaction_type: String): Flow<List<TransactionDto>>
+    fun get7DayTransaction(transactionType: String): Flow<List<TransactionDto>>
 
-    fun get14DayTransaction(transaction_type: String): Flow<List<TransactionDto>>
+    fun get14DayTransaction(transactionType: String): Flow<List<TransactionDto>>
 
-    fun getStartOfMonthTransaction(transaction_type: String): Flow<List<TransactionDto>>
+    fun getStartOfMonthTransaction(transactionType: String): Flow<List<TransactionDto>>
 
-    fun getLastMonthTransaction(transaction_type: String): Flow<List<TransactionDto>>
+    fun getLastMonthTransaction(transactionType: String): Flow<List<TransactionDto>>
 
     fun allTransaction(transactionType: String): Flow<List<TransactionDto>>
 }

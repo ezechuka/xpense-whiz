@@ -156,14 +156,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun Date.getFormattedDate(): String {
-        val dayOfWeek = DateFormat.format("EEE", this)
-        val day = DateFormat.format("dd", this)
-        val monthAbbr = DateFormat.format("MMM", this)
-        val year = DateFormat.format("yyyy", this)
 
-        return "$dayOfWeek $day, $monthAbbr"
-    }
 
     @SuppressLint("SimpleDateFormat")
     private fun getDate(): String {
@@ -378,6 +371,15 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+}
+
+fun Date.getFormattedDate(): String {
+    val dayOfWeek = DateFormat.format("EEE", this)
+    val day = DateFormat.format("dd", this)
+    val monthAbbr = DateFormat.format("MMM", this)
+    val year = DateFormat.format("yyyy", this)
+
+    return "$dayOfWeek $day, $monthAbbr"
 }
 
 fun String.amountFormat() : String {

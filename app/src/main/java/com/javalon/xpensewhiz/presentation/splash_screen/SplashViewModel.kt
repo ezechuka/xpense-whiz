@@ -28,7 +28,7 @@ class SplashViewModel @Inject constructor(
 
             getOnBoardingKeyUseCase().collect { completed ->
                 if (completed)
-                    _startDestination.value = Screen.InsightScreen.route
+                    _startDestination.value = Screen.AccountScreen.route
 //                    _startDestination.value = Screen.HomeScreen.route
             }
 

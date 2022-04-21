@@ -16,6 +16,10 @@ class TransactionRepositoryImpl @Inject constructor(private val dao: Transaction
         dao.insertAccounts(accounts)
     }
 
+    override fun getTransactionByAccount(accountType: String): Flow<List<TransactionDto>> {
+        return dao.getTransactionByAccount(accountType)
+    }
+
     override fun getDailyTransaction(entryDate: String) : Flow<List<TransactionDto>> {
         return dao.getDailyTransaction(entryDate)
     }
@@ -48,24 +52,24 @@ class TransactionRepositoryImpl @Inject constructor(private val dao: Transaction
         return dao.getMonthlyExpTransaction()
     }
 
-    override fun get3DayTransaction(transaction_type: String): Flow<List<TransactionDto>> {
-        return dao.get3DayTransaction(transaction_type)
+    override fun get3DayTransaction(transactionType: String): Flow<List<TransactionDto>> {
+        return dao.get3DayTransaction(transactionType)
     }
 
-    override fun get7DayTransaction(transaction_type: String): Flow<List<TransactionDto>> {
-        return dao.get7DayTransaction(transaction_type)
+    override fun get7DayTransaction(transactionType: String): Flow<List<TransactionDto>> {
+        return dao.get7DayTransaction(transactionType)
     }
 
-    override fun get14DayTransaction(transaction_type: String): Flow<List<TransactionDto>> {
-        return dao.get14DayTransaction(transaction_type)
+    override fun get14DayTransaction(transactionType: String): Flow<List<TransactionDto>> {
+        return dao.get14DayTransaction(transactionType)
     }
 
-    override fun getStartOfMonthTransaction(transaction_type: String): Flow<List<TransactionDto>> {
-        return dao.getStartOfMonthTransaction(transaction_type)
+    override fun getStartOfMonthTransaction(transactionType: String): Flow<List<TransactionDto>> {
+        return dao.getStartOfMonthTransaction(transactionType)
     }
 
-    override fun getLastMonthTransaction(transaction_type: String): Flow<List<TransactionDto>> {
-        return dao.getLastMonthTransaction(transaction_type)
+    override fun getLastMonthTransaction(transactionType: String): Flow<List<TransactionDto>> {
+        return dao.getLastMonthTransaction(transactionType)
     }
 
     override fun allTransaction(transactionType: String): Flow<List<TransactionDto>> {
