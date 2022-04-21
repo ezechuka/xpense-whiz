@@ -1,5 +1,9 @@
 package com.javalon.xpensewhiz.presentation.setting_screen.components
 
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -41,6 +46,7 @@ import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.javalon.xpensewhiz.R
 import com.javalon.xpensewhiz.presentation.setting_screen.SettingViewModel
+import com.javalon.xpensewhiz.presentation.setting_screen.service.LimitResetJobService
 import com.javalon.xpensewhiz.util.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -52,7 +58,25 @@ fun LimitContent(
     scope: CoroutineScope,
     settingViewModel: SettingViewModel = hiltViewModel()
 ) {
+    val MILLISECS = 86_400_000L
+    val limitDuration = listOf(1*MILLISECS, 7*MILLISECS, 30*MILLISECS)
+    val limitDurationText by remember {
+        mutableStateOf(
+            listOf("Daily", "Weekly", "Monthly")
+        )
+    }
+    var selectedLimit by remember { mutableStateOf(limitDurationText.first()) }
+    var isAmountEmpty by remember { mutableStateOf(false) }
     var limitTextFieldValue by remember { mutableStateOf(TextFieldValue(String())) }
+    var expandedState by remember { mutableStateOf(false) }
+    var size by remember { mutableStateOf(Size.Zero) }
+
+    val context = LocalContext.current
+    val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+    var resetJob: JobInfo = JobInfo.Builder(500, ComponentName(context, LimitResetJobService::class.java))
+        .setPeriodic(limitDuration.first())
+        .build()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium),
@@ -68,6 +92,7 @@ fun LimitContent(
         TextField(
             value = limitTextFieldValue,
             onValueChange = { field ->
+                isAmountEmpty = false
                 limitTextFieldValue = field
             },
             modifier = Modifier
@@ -84,6 +109,7 @@ fun LimitContent(
                     style = MaterialTheme.typography.subtitle2
                 )
             },
+            isError = isAmountEmpty,
             textStyle = MaterialTheme.typography.subtitle2,
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = MaterialTheme.colors.primary,
@@ -92,15 +118,6 @@ fun LimitContent(
             ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
-
-        var expandedState by remember { mutableStateOf(false) }
-        var size by remember { mutableStateOf(Size.Zero) }
-        val limitDuration by remember {
-            mutableStateOf(
-                listOf("Daily", "Weekly", "Monthly")
-            )
-        }
-        var selectedLimit by remember { mutableStateOf(limitDuration.first()) }
 
         Row(
             modifier = Modifier
@@ -137,10 +154,13 @@ fun LimitContent(
                     }
                 )
             ) {
-                limitDuration.forEach { label ->
+                limitDurationText.forEachIndexed { index, label ->
                     DropdownMenuItem(onClick = {
                         selectedLimit = label
                         expandedState = false
+                        resetJob = JobInfo.Builder(500, ComponentName(context, LimitResetJobService::class.java))
+                            .setPeriodic(limitDuration[index])
+                            .build()
                     }) {
                         Text(
                             text = label,
@@ -155,8 +175,15 @@ fun LimitContent(
         TextButton(
             onClick = {
                 scope.launch {
-                    settingViewModel.editExpenseLimit(limitTextFieldValue.text.toDouble())
-                    modalBottomSheetState.hide()
+                    val amount = limitTextFieldValue.text
+                    if (amount.isBlank())
+                        isAmountEmpty = true
+                    else {
+                        isAmountEmpty = false
+                        settingViewModel.editExpenseLimit(limitTextFieldValue.text.toDouble())
+                        modalBottomSheetState.hide()
+                        jobScheduler.schedule(resetJob)
+                    }
                 }
             },
             modifier = Modifier
