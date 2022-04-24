@@ -7,6 +7,6 @@ import javax.inject.Inject
 
 class GetAllTransactionUseCase @Inject constructor(private val repo: TransactionRepository) {
     operator fun invoke(transactionType: String): Flow<List<TransactionDto>> {
-        return repo.allTransaction(transactionType)
+        return repo.getTransactionByType(transactionType)
     }
 }

@@ -7,6 +7,6 @@ import javax.inject.Inject
 
 class GetMonthlyTransactionUseCase @Inject constructor(private val repo: TransactionRepository) {
     operator fun invoke(): Flow<List<TransactionDto>?> {
-        return repo.getMonthlyTransaction()
+        return repo.getAllTransaction()
     }
 }

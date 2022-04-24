@@ -18,7 +18,7 @@ interface TransactionRepository {
 
     fun getAccounts(): Flow<List<AccountDto>>
 
-    fun getMonthlyTransaction() : Flow<List<TransactionDto>>
+    fun getAllTransaction() : Flow<List<TransactionDto>>
 
     fun eraseTransaction()
 
@@ -38,5 +38,5 @@ interface TransactionRepository {
 
     fun getLastMonthTransaction(transactionType: String): Flow<List<TransactionDto>>
 
-    fun allTransaction(transactionType: String): Flow<List<TransactionDto>>
+    fun getTransactionByType(transactionType: String): Flow<List<TransactionDto>>
 }

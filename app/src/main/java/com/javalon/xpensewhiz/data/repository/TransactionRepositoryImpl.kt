@@ -32,8 +32,8 @@ class TransactionRepositoryImpl @Inject constructor(private val dao: Transaction
         return dao.getAccounts()
     }
 
-    override fun getMonthlyTransaction(): Flow<List<TransactionDto>> {
-       return dao.getMonthlyTransaction()
+    override fun getAllTransaction(): Flow<List<TransactionDto>> {
+       return dao.getAllTransaction()
     }
 
     override fun eraseTransaction() {
@@ -72,7 +72,7 @@ class TransactionRepositoryImpl @Inject constructor(private val dao: Transaction
         return dao.getLastMonthTransaction(transactionType)
     }
 
-    override fun allTransaction(transactionType: String): Flow<List<TransactionDto>> {
-        return dao.allTransaction(transactionType)
+    override fun getTransactionByType(transactionType: String): Flow<List<TransactionDto>> {
+        return dao.getTransactionByType(transactionType)
     }
 }
