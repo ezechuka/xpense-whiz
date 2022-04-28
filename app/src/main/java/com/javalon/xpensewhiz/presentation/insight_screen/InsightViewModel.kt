@@ -8,9 +8,9 @@ import com.javalon.xpensewhiz.domain.model.Transaction
 import com.javalon.xpensewhiz.domain.usecase.read_database.Get14DayTransaction
 import com.javalon.xpensewhiz.domain.usecase.read_database.Get3DayTransaction
 import com.javalon.xpensewhiz.domain.usecase.read_database.Get7DayTransaction
-import com.javalon.xpensewhiz.domain.usecase.read_database.GetAllTransactionUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_database.GetLastMonthTransaction
 import com.javalon.xpensewhiz.domain.usecase.read_database.GetStartOfMonthTransaction
+import com.javalon.xpensewhiz.domain.usecase.read_database.GetTransactionByTypeUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetCurrencyUseCase
 import com.javalon.xpensewhiz.presentation.home_screen.TransactionType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +30,7 @@ class InsightViewModel @Inject constructor(
     private val get14DayTransaction: Get14DayTransaction,
     private val getStartOfMonthTransaction: GetStartOfMonthTransaction,
     private val getLastMonthTransaction: GetLastMonthTransaction,
-    private val getAllTransaction: GetAllTransactionUseCase
+    private val getAllTransaction: GetTransactionByTypeUseCase
 ) : ViewModel() {
 
     private var _tabButton = MutableStateFlow(TransactionType.INCOME)

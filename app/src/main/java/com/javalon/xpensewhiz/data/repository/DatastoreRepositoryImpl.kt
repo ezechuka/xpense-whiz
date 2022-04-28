@@ -11,7 +11,6 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.javalon.xpensewhiz.common.Constants
 import com.javalon.xpensewhiz.domain.repository.DatastoreRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = "whiz_key_store")
@@ -29,9 +28,8 @@ class DatastoreRepositoryImpl @Inject constructor(context: Context): DatastoreRe
         }
     }
 
-    override suspend fun readOnboardingKeyFromDataStore(): Boolean {
-        val preference = datastore.data.first()
-        return preference[onBoardingKey] ?: false
+    override suspend fun readOnboardingKeyFromDataStore(): Flow<Preferences> {
+        return datastore.data
     }
 
     override suspend fun writeCurrencyToDataStore(currency: String) {

@@ -2,8 +2,10 @@ package com.javalon.xpensewhiz.presentation.splash_screen
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.javalon.xpensewhiz.common.Constants
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetOnBoardingKeyUseCase
 import com.javalon.xpensewhiz.presentation.navigation.Screen
 import kotlinx.coroutines.Dispatchers.IO
@@ -25,8 +27,9 @@ class SplashViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(IO) {
-
-            getOnBoardingKeyUseCase().collect { completed ->
+            val onBoardingKey = booleanPreferencesKey(Constants.WELCOME_KEY)
+            getOnBoardingKeyUseCase().collect { preferences ->
+                val completed = preferences[onBoardingKey] ?: false
                 if (completed)
                     _startDestination.value = Screen.AccountScreen.route
 //                    _startDestination.value = Screen.HomeScreen.route

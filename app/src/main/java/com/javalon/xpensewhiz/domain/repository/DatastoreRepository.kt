@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface DatastoreRepository {
     suspend fun writeOnboardingKeyToDataStore(completed: Boolean)
 
-    suspend fun readOnboardingKeyFromDataStore(): Boolean
+    suspend fun readOnboardingKeyFromDataStore(): Flow<Preferences>
 
     suspend fun writeCurrencyToDataStore(currency: String)
 

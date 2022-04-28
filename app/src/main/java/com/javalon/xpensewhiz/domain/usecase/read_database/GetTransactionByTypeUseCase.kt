@@ -5,8 +5,8 @@ import com.javalon.xpensewhiz.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetMonthlyTransactionUseCase @Inject constructor(private val repo: TransactionRepository) {
-    operator fun invoke(): Flow<List<TransactionDto>?> {
-        return repo.getAllTransaction()
+class GetTransactionByTypeUseCase @Inject constructor(private val repo: TransactionRepository) {
+    operator fun invoke(transactionType: String): Flow<List<TransactionDto>> {
+        return repo.getTransactionByType(transactionType)
     }
 }
