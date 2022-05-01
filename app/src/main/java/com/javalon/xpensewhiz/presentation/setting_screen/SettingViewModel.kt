@@ -1,11 +1,7 @@
 package com.javalon.xpensewhiz.presentation.setting_screen
 
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.doublePreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.javalon.xpensewhiz.common.Constants
 import com.javalon.xpensewhiz.data.local.entity.AccountDto
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetCurrencyUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetExpenseLimitUseCase
@@ -19,7 +15,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,24 +39,21 @@ class SettingViewModel @Inject constructor(
     val reminderLimit: StateFlow<Boolean> = _reminderLimit
 
     init {
-        val selectedCurrency = stringPreferencesKey(Constants.CURRENCY_KEY)
         viewModelScope.launch(IO) {
-            getCurrencyUseCase().collect { selectedCurrencyPref ->
-                _currency.value = selectedCurrencyPref[selectedCurrency] ?: ""
+            getCurrencyUseCase().collect { selectedCurrency->
+                _currency.value = selectedCurrency
             }
         }
 
-        val expenseLimit = doublePreferencesKey(Constants.EXPENSE_LIMIT_KEY)
         viewModelScope.launch(IO) {
-            getExpenseLimitUseCase().collect { preferences ->
-                _expenseLimit.value = preferences[expenseLimit] ?: 0.00
+            getExpenseLimitUseCase().collect { expenseLimit ->
+                _expenseLimit.value = expenseLimit
             }
         }
 
-        val limitKey = booleanPreferencesKey(Constants.LIMIT_KEY)
         viewModelScope.launch(IO) {
-            getLimitKeyUseCase().collect { preferences ->
-                _reminderLimit.value = preferences[limitKey] ?: false
+            getLimitKeyUseCase().collect { limitKey ->
+                _reminderLimit.value = limitKey
             }
         }
     }
@@ -87,9 +79,15 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    fun writeLimitKey(enabled: Boolean) {
+    fun editLimitKey(enabled: Boolean) {
         viewModelScope.launch(IO) {
             editLimitKeyUseCase(enabled)
+        }
+    }
+
+    fun editLimitDuration(duration: Int) {
+        viewModelScope.launch(IO) {
+            editLimitDuration(duration)
         }
     }
 }
