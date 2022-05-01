@@ -158,6 +158,7 @@ fun LimitContent(
                     DropdownMenuItem(onClick = {
                         selectedLimit = label
                         expandedState = false
+                        settingViewModel.editLimitDuration(index)
                         resetJob = JobInfo.Builder(500, ComponentName(context, LimitResetJobService::class.java))
                             .setPeriodic(limitDuration[index])
                             .build()
