@@ -1,20 +1,18 @@
 package com.javalon.xpensewhiz.presentation.account_screen
 
-import androidx.datastore.preferences.core.stringPreferencesKey
+import android.text.format.DateFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.javalon.xpensewhiz.common.Constants
 import com.javalon.xpensewhiz.domain.model.Account
 import com.javalon.xpensewhiz.domain.model.Transaction
 import com.javalon.xpensewhiz.domain.usecase.read_database.GetAccountsUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_database.GetTransactionByAccount
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetCurrencyUseCase
-import com.javalon.xpensewhiz.presentation.home_screen.getFormattedDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,7 +47,9 @@ class AccountViewModel @Inject constructor(
                 allTrx.let { trxDto ->
                     val newTrx = trxDto.map { it.toTransaction() }.reversed()
                     transactions.value = newTrx.groupBy { trx ->
-                        trx.date.getFormattedDate()
+                        getFormattedDate(
+                            trx.date
+                        )
                     }
                 }
             }
@@ -58,11 +58,18 @@ class AccountViewModel @Inject constructor(
 
     private fun currencyFormat() {
         viewModelScope.launch(IO) {
-            val selectedCurrency = stringPreferencesKey(Constants.CURRENCY_KEY)
-            getCurrencyUseCase().collect { selectedCurrencyPref ->
-                val currencyCode = selectedCurrencyPref[selectedCurrency] ?: ""
+            getCurrencyUseCase().collect { selectedCurrency ->
+                val currencyCode = selectedCurrency
                 selectedCurrencyCode.value = currencyCode
             }
         }
+    }
+
+    fun getFormattedDate(date: Date): String {
+        val dayOfWeek = DateFormat.format("EEE", date)
+        val day = DateFormat.format("dd", date)
+        val monthAbbr = DateFormat.format("MMM", date)
+
+        return "$dayOfWeek $day, $monthAbbr"
     }
 }
