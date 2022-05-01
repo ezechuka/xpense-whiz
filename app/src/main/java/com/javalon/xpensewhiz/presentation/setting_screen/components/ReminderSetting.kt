@@ -53,7 +53,7 @@ fun ReminderSetting(
         )
 
         Switch(modifier = Modifier.padding(end = MaterialTheme.spacing.small), switch = reminderLimit) { switched ->
-            settingViewModel.writeLimitKey(enabled = switched)
+            settingViewModel.editLimitKey(enabled = switched)
         }
     }
 }
