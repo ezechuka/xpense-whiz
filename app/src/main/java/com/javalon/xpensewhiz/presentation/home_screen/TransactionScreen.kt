@@ -22,10 +22,12 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -34,6 +36,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -66,6 +69,7 @@ import com.javalon.xpensewhiz.presentation.home_screen.components.Category
 import com.javalon.xpensewhiz.presentation.home_screen.components.InfoBanner
 import com.javalon.xpensewhiz.presentation.home_screen.components.KeypadComponent
 import com.javalon.xpensewhiz.presentation.ui.theme.Amber500
+import com.javalon.xpensewhiz.presentation.ui.theme.Red200
 import com.javalon.xpensewhiz.util.spacing
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -95,6 +99,7 @@ fun TransactionScreen(
     val showInfoBanner by homeViewModel.showInfoBanner.collectAsState()
     val expenseAmount by homeViewModel.transactionAmount.collectAsState()
     val currencyCode by homeViewModel.selectedCurrencyCode.collectAsState()
+    val limitInfoWarning by homeViewModel.limitAlert.collectAsState(initial = HomeViewModel.UIEvent.NoAlert())
 
     BottomSheetScaffold(
         sheetContent = {
@@ -109,8 +114,10 @@ fun TransactionScreen(
         sheetContentColor = MaterialTheme.colors.background
     ) {
         LaunchedEffect(key1 = transactionPos) {
-            if (transactionPos != -1)
+            if (transactionPos != -1) {
                 homeViewModel.displayTransaction(transactionDate, transactionPos, transactionStatus)
+                homeViewModel.displayExpenseLimitWarning()
+            }
         }
 
         Box(
@@ -168,6 +175,7 @@ fun TransactionScreen(
                                     )
                                 }
                             }
+                            navController.navigateUp()
                         },
                         modifier = Modifier
                             .scale(0.8f)
@@ -253,7 +261,13 @@ fun TransactionScreen(
                             )
                             .align(Alignment.Start)
                     )
-                    Divider(modifier = Modifier.fillMaxWidth(0.9f))
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = MaterialTheme.spacing.medium
+                            )
+                    )
 
                     LazyRow(
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -311,6 +325,30 @@ fun TransactionScreen(
                             color = MaterialTheme.colors.surface,
                         )
                     }
+                    if (limitInfoWarning is HomeViewModel.UIEvent.Alert) {
+                        Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier
+                                .padding(
+                                    horizontal = MaterialTheme.spacing.medium
+                                )
+                                .align(Alignment.Start)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.info_warning),
+                                contentDescription = null,
+                                tint = Red200
+                            )
+                            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
+                                Text(
+                                    text = (limitInfoWarning as HomeViewModel.UIEvent.Alert).info,
+                                    style = MaterialTheme.typography.caption
+                                )
+                            }
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
 
@@ -327,7 +365,13 @@ fun TransactionScreen(
                             )
                     )
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.extraSmall))
-                    Divider(modifier = Modifier.fillMaxWidth(0.9f))
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = MaterialTheme.spacing.medium
+                            )
+                    )
 
                     Category()
                 }
