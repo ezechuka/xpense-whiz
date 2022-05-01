@@ -3,8 +3,9 @@ package com.javalon.xpensewhiz.domain.usecase
 import com.javalon.xpensewhiz.domain.model.CurrencyModel
 import java.util.Currency
 import java.util.Locale
+import javax.inject.Inject
 
-class GetCurrencyUseCase {
+class GetCurrencyUseCase @Inject constructor() {
     operator fun invoke(): List<CurrencyModel> {
         val currencies = mutableListOf<CurrencyModel>()
         val countries = mutableListOf<String>()
