@@ -38,7 +38,7 @@ fun WelcomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             HorizontalPager(
-                count = 3,
+                count = pages.size,
                 state = pagerState,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(10f)

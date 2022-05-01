@@ -21,14 +21,15 @@ import javax.inject.Inject
 class WelcomeViewModel @Inject constructor(
     private val editOnBoardingUseCase: EditOnBoardingUseCase,
     private val editCurrencyUseCase: EditCurrencyUseCase,
-    private val insertAccountsUseCase: InsertAccountsUseCase
+    private val insertAccountsUseCase: InsertAccountsUseCase,
+    getCurrencyUseCase: GetCurrencyUseCase
 ) : ViewModel() {
 
     var countryCurrencies = mutableStateOf(emptyMap<Char, List<CurrencyModel>>())
         private set
 
     init {
-        countryCurrencies.value = GetCurrencyUseCase().invoke().groupBy { it.country[0] }
+        countryCurrencies.value = getCurrencyUseCase().groupBy { it.country[0] }
     }
 
     val listOfPages: State<List<OnBoardingPage>> = mutableStateOf(listOf(
