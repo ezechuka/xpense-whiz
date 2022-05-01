@@ -1,4 +1,4 @@
-package com.javalon.xpensewhiz.presentation.splash_screen
+package com.javalon.xpensewhiz.presentation.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,9 +8,10 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.unit.ExperimentalUnitApi
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.javalon.xpensewhiz.presentation.navigation.MainScreen
 import com.javalon.xpensewhiz.presentation.ui.theme.XpenseWhizTheme
@@ -29,20 +30,17 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var splashViewModel: SplashViewModel
+    lateinit var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen().setKeepOnScreenCondition {
-            splashViewModel.isLoading.value
-        }
 
         setContent {
             XpenseWhizTheme {
                 Surface(color = MaterialTheme.colors.background) {
+                    val destination by mainViewModel.startDestination.collectAsState()
                     MainScreen(
-//                        startDestination = Screen.HomeScreen.route
-                        startDestination = splashViewModel.startDestination.value,
+                        startDestination = destination,
                     )
                 }
             }
