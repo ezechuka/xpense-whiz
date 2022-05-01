@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.ExperimentalMaterialApi
@@ -38,7 +37,6 @@ import com.javalon.xpensewhiz.presentation.home_screen.components.ListPlaceholde
 import com.javalon.xpensewhiz.presentation.home_screen.components.TabButton
 import com.javalon.xpensewhiz.presentation.home_screen.components.TransactionItem
 import com.javalon.xpensewhiz.presentation.navigation.Screen
-import com.javalon.xpensewhiz.presentation.ui.theme.Amber500
 import com.javalon.xpensewhiz.util.spacing
 
 @ExperimentalFoundationApi
