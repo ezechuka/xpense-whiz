@@ -1,26 +1,26 @@
 package com.javalon.xpensewhiz.presentation.home_screen
 
-import android.annotation.SuppressLint
-import android.text.format.DateFormat
 import androidx.compose.ui.graphics.Color
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.javalon.xpensewhiz.R
 import com.javalon.xpensewhiz.common.Constants
 import com.javalon.xpensewhiz.data.local.entity.TransactionDto
 import com.javalon.xpensewhiz.domain.model.Transaction
+import com.javalon.xpensewhiz.domain.usecase.GetDateUseCase
+import com.javalon.xpensewhiz.domain.usecase.GetFormattedDateUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_database.GetAccountUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_database.GetAccountsUseCase
+import com.javalon.xpensewhiz.domain.usecase.read_database.GetAllTransactionUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_database.GetCurrentDayExpTransactionUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_database.GetDailyTransactionUseCase
-import com.javalon.xpensewhiz.domain.usecase.read_database.GetAllTransactionUseCase
+import com.javalon.xpensewhiz.domain.usecase.read_database.GetMonthlyExpTransactionUse
+import com.javalon.xpensewhiz.domain.usecase.read_database.GetWeeklyExpTransactionUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetCurrencyUseCase
+import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetExpenseLimitUseCase
+import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetLimitDurationUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.InsertAccountsUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.InsertNewTransactionUseCase
-import com.javalon.xpensewhiz.presentation.ui.theme.Amber500
-import com.javalon.xpensewhiz.presentation.ui.theme.GreenAlpha700
-import com.javalon.xpensewhiz.presentation.ui.theme.Red500
 import com.javalon.xpensewhiz.presentation.ui.theme.businessBg
 import com.javalon.xpensewhiz.presentation.ui.theme.clothBg
 import com.javalon.xpensewhiz.presentation.ui.theme.electricBg
@@ -42,17 +42,19 @@ import com.javalon.xpensewhiz.presentation.ui.theme.vehicleBg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val getDateUseCase: GetDateUseCase,
+    private val getFormattedDateUseCase: GetFormattedDateUseCase,
     private val insertDailyTransactionUseCase: InsertNewTransactionUseCase,
     private val insertAccountsUseCase: InsertAccountsUseCase,
     private val getDailyTransactionUseCase: GetDailyTransactionUseCase,
@@ -60,7 +62,11 @@ class HomeViewModel @Inject constructor(
     private val getAccountUseCase: GetAccountUseCase,
     private val getAccountsUseCase: GetAccountsUseCase,
     private val getCurrencyUseCase: GetCurrencyUseCase,
-    private val getCurrentDayExpTransactionUseCase: GetCurrentDayExpTransactionUseCase
+    private val getExpenseLimitUseCase: GetExpenseLimitUseCase,
+    private val getLimitDurationUseCase: GetLimitDurationUseCase,
+    private val getCurrentDayExpTransactionUseCase: GetCurrentDayExpTransactionUseCase,
+    private val getWeeklyExpTransactionUseCase: GetWeeklyExpTransactionUseCase,
+    private val getMonthlyExpTransactionUse: GetMonthlyExpTransactionUse
 ) : ViewModel() {
     private var _isDecimal = MutableStateFlow(false)
     private var decimal: String = String()
@@ -81,6 +87,9 @@ class HomeViewModel @Inject constructor(
         private set
 
     var monthlyTransaction = MutableStateFlow(mapOf<String, List<Transaction>>())
+        private set
+
+    var currentExpenseAmount = MutableStateFlow(0.0)
         private set
 
     var transactionTitle = MutableStateFlow(String())
@@ -107,16 +116,44 @@ class HomeViewModel @Inject constructor(
     var selectedCurrencyCode = MutableStateFlow(String())
         private set
 
+    var limitAlert = MutableSharedFlow<UIEvent>(replay = 1)
+        private set
+
     init {
-        val currentDate = getDate()
-        formattedDate.value = currentTime.value.getFormattedDate()
+        var duration = 0
+        val currentDate = getDateUseCase()
+        formattedDate.value = getFormattedDateUseCase(currentTime.value)
         date.value = currentDate
         currencyFormat()
 
         viewModelScope.launch(IO) {
-            getCurrentDayExpTransactionUseCase().collect {
-                val trx = it.map { trans -> trans.toTransaction() }
+            getLimitDurationUseCase().collectLatest { pref ->
+                duration = pref
             }
+        }
+
+        viewModelScope.launch(IO) {
+            when (duration) {
+                0 -> {
+                    getCurrentDayExpTransactionUseCase().collect { result ->
+                        val trx = result.map { trans -> trans.toTransaction() }
+                        currentExpenseAmount.value = calculateTransaction(trx.map { it.amount })
+                    }
+                }
+                1 -> {
+                    getWeeklyExpTransactionUseCase().collect { result ->
+                        val trx = result.map { trans -> trans.toTransaction() }
+                        currentExpenseAmount.value = calculateTransaction(trx.map { it.amount })
+                    }
+                }
+                else -> {
+                    getMonthlyExpTransactionUse().collect { result ->
+                        val trx = result.map { trans -> trans.toTransaction() }
+                        currentExpenseAmount.value = calculateTransaction(trx.map { it.amount })
+                    }
+                }
+            }
+
         }
 
         viewModelScope.launch(IO) {
@@ -131,9 +168,9 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(IO) {
             getAllTransactionUseCase().collect { allTransaction ->
                 allTransaction?.let {
-                    val newMonthlyExpenses = allTransaction.map { it.toTransaction() }.reversed()
-                    monthlyTransaction.value = newMonthlyExpenses.groupBy { monthlyExpense ->
-                        monthlyExpense.date.getFormattedDate()
+                    val allSortedTrx = allTransaction.map { it.toTransaction() }.reversed()
+                    monthlyTransaction.value = allSortedTrx.groupBy { monthlyExpense ->
+                        getFormattedDateUseCase(monthlyExpense.date)
                     }
                 }
             }
@@ -149,13 +186,6 @@ class HomeViewModel @Inject constructor(
                 totalExpense.value = expense
             }
         }
-    }
-
-
-
-    @SuppressLint("SimpleDateFormat")
-    private fun getDate(): String {
-        return SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().time)
     }
 
     private fun calculateTransaction(transactions: List<Double>): Double {
@@ -334,10 +364,12 @@ class HomeViewModel @Inject constructor(
                         currentAccount.income = currentAccount.income - transaction.amount
                         currentAccount.income =
                             currentAccount.income + transactionAmount.value.toDouble()
+                        currentAccount.balance = currentAccount.income - currentAccount.expense
                     } else {
                         currentAccount.expense = currentAccount.expense - transaction.amount
                         currentAccount.expense =
                             currentAccount.expense + transactionAmount.value.toDouble()
+                        currentAccount.balance = currentAccount.income - currentAccount.expense
                     }
                     insertAccountsUseCase(listOf(currentAccount))
                 }
@@ -355,24 +387,41 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun currencyFormat() {
+    fun displayExpenseLimitWarning() {
         viewModelScope.launch(IO) {
-            val selectedCurrency = stringPreferencesKey(Constants.CURRENCY_KEY)
-            getCurrencyUseCase().collect { selectedCurrencyPref ->
-                val currencyCode = selectedCurrencyPref[selectedCurrency] ?: ""
-                selectedCurrencyCode.value = currencyCode
+            getExpenseLimitUseCase().collectLatest { expenseAmount ->
+                val threshold = 0.8 * expenseAmount
+                when {
+                    currentExpenseAmount.value > expenseAmount -> {
+                        val expenseOverflow = currentExpenseAmount.value - expenseAmount
+                        val info =
+                            "${selectedCurrencyCode.value} $expenseOverflow over specified limit"
+                        limitAlert.emit(UIEvent.Alert(info))
+                    }
+                    currentExpenseAmount.value > threshold -> {
+                        val expenseAvailable = expenseAmount - currentExpenseAmount.value
+                        val info =
+                            "${selectedCurrencyCode.value} $expenseAvailable away from specified limit"
+                        limitAlert.emit(UIEvent.Alert(info))
+                    }
+                    else -> limitAlert.emit(UIEvent.NoAlert())
+                }
             }
         }
     }
-}
 
-fun Date.getFormattedDate(): String {
-    val dayOfWeek = DateFormat.format("EEE", this)
-    val day = DateFormat.format("dd", this)
-    val monthAbbr = DateFormat.format("MMM", this)
-//    val year = DateFormat.format("yyyy", this)
+    private fun currencyFormat() {
+        viewModelScope.launch(IO) {
+            getCurrencyUseCase().collect { selectedCurrency ->
+                selectedCurrencyCode.value = selectedCurrency
+            }
+        }
+    }
 
-    return "$dayOfWeek $day, $monthAbbr"
+    sealed class UIEvent {
+        data class Alert(val info: String): UIEvent()
+        data class NoAlert(val info: String = String()): UIEvent()
+    }
 }
 
 fun String.amountFormat() : String {
@@ -389,9 +438,9 @@ enum class TransactionType(val title: String) {
 }
 
 enum class Account(val title: String, val iconRes: Int, val color: Color) {
-    CASH("Cash", R.drawable.cash, Amber500),
-    BANK("Bank", R.drawable.bank, GreenAlpha700),
-    CARD("Card", R.drawable.credit_card, Red500)
+    CASH("Cash", R.drawable.cash, leisureBg),
+    BANK("Bank", R.drawable.bank, subBg),
+    CARD("Card", R.drawable.credit_card, healthBg)
 }
 
 enum class Category(
