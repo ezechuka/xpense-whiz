@@ -1,9 +1,7 @@
 package com.javalon.xpensewhiz.presentation.insight_screen
 
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.javalon.xpensewhiz.common.Constants
 import com.javalon.xpensewhiz.domain.model.Transaction
 import com.javalon.xpensewhiz.domain.usecase.read_database.Get14DayTransaction
 import com.javalon.xpensewhiz.domain.usecase.read_database.Get3DayTransaction
@@ -17,7 +15,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -54,10 +51,8 @@ class InsightViewModel @Inject constructor(
 
     private fun currencyFormat() {
         viewModelScope.launch(IO) {
-            val selectedCurrency = stringPreferencesKey(Constants.CURRENCY_KEY)
-            getCurrencyUseCase().collect { selectedCurrencyPref ->
-                val currencyCode = selectedCurrencyPref[selectedCurrency] ?: ""
-                selectedCurrencyCode.value = currencyCode
+            getCurrencyUseCase().collect { selectedCurrency ->
+                selectedCurrencyCode.value = selectedCurrency
             }
         }
     }
