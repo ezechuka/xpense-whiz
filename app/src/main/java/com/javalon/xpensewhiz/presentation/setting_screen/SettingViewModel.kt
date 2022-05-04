@@ -5,16 +5,17 @@ import androidx.lifecycle.viewModelScope
 import com.javalon.xpensewhiz.data.local.entity.AccountDto
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetCurrencyUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetExpenseLimitUseCase
+import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetLimitDurationUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetLimitKeyUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.EraseTransactionUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.InsertAccountsUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_datastore.EditExpenseLimitUseCase
+import com.javalon.xpensewhiz.domain.usecase.write_datastore.EditLimitDurationUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_datastore.EditLimitKeyUseCase
 import com.javalon.xpensewhiz.presentation.home_screen.Account
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,34 +27,45 @@ class SettingViewModel @Inject constructor(
     private val getExpenseLimitUseCase: GetExpenseLimitUseCase,
     private val editExpenseLimitUseCase: EditExpenseLimitUseCase,
     private val getLimitKeyUseCase: GetLimitKeyUseCase,
-    private val editLimitKeyUseCase: EditLimitKeyUseCase
+    private val editLimitKeyUseCase: EditLimitKeyUseCase,
+    private val editLimitDurationUseCase: EditLimitDurationUseCase,
+    private val getLimitDurationUseCase: GetLimitDurationUseCase
 ) : ViewModel() {
 
-    private var _currency = MutableStateFlow(String())
-    val currency: StateFlow<String> = _currency
+    var currency = MutableStateFlow(String())
+        private set
 
-    private var _expenseLimit = MutableStateFlow(0.0)
-    val expenseLimit: StateFlow<Double> = _expenseLimit
+    var expenseLimit = MutableStateFlow(0.0)
+        private set
 
-    private var _reminderLimit = MutableStateFlow(false)
-    val reminderLimit: StateFlow<Boolean> = _reminderLimit
+    var expenseLimitDuration = MutableStateFlow(0)
+        private set
+
+    var reminderLimit = MutableStateFlow(false)
+        private set
 
     init {
         viewModelScope.launch(IO) {
             getCurrencyUseCase().collect { selectedCurrency->
-                _currency.value = selectedCurrency
+                currency.value = selectedCurrency
             }
         }
 
         viewModelScope.launch(IO) {
-            getExpenseLimitUseCase().collect { expenseLimit ->
-                _expenseLimit.value = expenseLimit
+            getExpenseLimitUseCase().collect { expenseAmount ->
+                expenseLimit.value = expenseAmount
             }
         }
 
         viewModelScope.launch(IO) {
             getLimitKeyUseCase().collect { limitKey ->
-                _reminderLimit.value = limitKey
+                reminderLimit.value = limitKey
+            }
+        }
+
+        viewModelScope.launch(IO) {
+            getLimitDurationUseCase().collect { duration ->
+                expenseLimitDuration.value = duration
             }
         }
     }
@@ -87,7 +99,7 @@ class SettingViewModel @Inject constructor(
 
     fun editLimitDuration(duration: Int) {
         viewModelScope.launch(IO) {
-            editLimitDuration(duration)
+            editLimitDurationUseCase(duration)
         }
     }
 }
