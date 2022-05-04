@@ -99,6 +99,7 @@ fun TransactionScreen(
     val showInfoBanner by homeViewModel.showInfoBanner.collectAsState()
     val expenseAmount by homeViewModel.transactionAmount.collectAsState()
     val currencyCode by homeViewModel.selectedCurrencyCode.collectAsState()
+    val limitKey by homeViewModel.limitKey.collectAsState()
     val limitInfoWarning by homeViewModel.limitAlert.collectAsState(initial = HomeViewModel.UIEvent.NoAlert())
 
     BottomSheetScaffold(
@@ -116,8 +117,8 @@ fun TransactionScreen(
         LaunchedEffect(key1 = transactionPos) {
             if (transactionPos != -1) {
                 homeViewModel.displayTransaction(transactionDate, transactionPos, transactionStatus)
-                homeViewModel.displayExpenseLimitWarning()
             }
+            homeViewModel.displayExpenseLimitWarning()
         }
 
         Box(
@@ -158,24 +159,29 @@ fun TransactionScreen(
                                             transactionAmount.value.toDouble(),
                                             category.value.title,
                                             Constants.INCOME, transactionTitle.value
-                                        )
+                                        ) {
+                                            navController.navigateUp()
+                                        }
                                     } else {
                                         insertDailyTransaction(
                                             date.value,
                                             transactionAmount.value.toDouble(),
                                             category.value.title,
                                             Constants.EXPENSE, transactionTitle.value
-                                        )
+                                        ) {
+                                            navController.navigateUp()
+                                        }
                                     }
                                 } else {
                                     updateTransaction(
                                         transactionDate,
                                         transactionPos,
                                         transactionStatus
-                                    )
+                                    ) {
+                                        navController.navigateUp()
+                                    }
                                 }
                             }
-                            navController.navigateUp()
                         },
                         modifier = Modifier
                             .scale(0.8f)
@@ -325,27 +331,29 @@ fun TransactionScreen(
                             color = MaterialTheme.colors.surface,
                         )
                     }
-                    if (limitInfoWarning is HomeViewModel.UIEvent.Alert) {
-                        Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            modifier = Modifier
-                                .padding(
-                                    horizontal = MaterialTheme.spacing.medium
+                    if (limitKey) {
+                        if (limitInfoWarning is HomeViewModel.UIEvent.Alert) {
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                                modifier = Modifier
+                                    .padding(
+                                        horizontal = MaterialTheme.spacing.medium
+                                    )
+                                    .align(Alignment.Start)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.info_warning),
+                                    contentDescription = null,
+                                    tint = Red200
                                 )
-                                .align(Alignment.Start)
-                        ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.info_warning),
-                                contentDescription = null,
-                                tint = Red200
-                            )
-                            CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
-                                Text(
-                                    text = (limitInfoWarning as HomeViewModel.UIEvent.Alert).info,
-                                    style = MaterialTheme.typography.caption
-                                )
+                                CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.disabled) {
+                                    Text(
+                                        text = (limitInfoWarning as HomeViewModel.UIEvent.Alert).info,
+                                        style = MaterialTheme.typography.caption
+                                    )
+                                }
                             }
                         }
                     }
