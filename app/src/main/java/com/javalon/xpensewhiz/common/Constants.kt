@@ -9,5 +9,6 @@ class Constants {
         const val CURRENCY_KEY = "currency"
         const val EXPENSE_LIMIT_KEY = "expense_limit"
         const val LIMIT_DURATION = "limit_duration"
+        const val PRIVACY_URL = "https://github.com/ezechuka/xpense-whiz/blob/main/privacy_policy.md"
     }
 }
