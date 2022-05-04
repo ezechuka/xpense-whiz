@@ -1,9 +1,5 @@
 package com.javalon.xpensewhiz.presentation.setting_screen.components
 
-import android.app.job.JobInfo
-import android.app.job.JobScheduler
-import android.content.ComponentName
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +23,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,13 +41,19 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.javalon.xpensewhiz.R
 import com.javalon.xpensewhiz.presentation.setting_screen.SettingViewModel
-import com.javalon.xpensewhiz.presentation.setting_screen.service.LimitResetJobService
+import com.javalon.xpensewhiz.presentation.setting_screen.service.LimitResetWorker
 import com.javalon.xpensewhiz.util.spacing
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
+@DelicateCoroutinesApi
 @ExperimentalMaterialApi
 @Composable
 fun LimitContent(
@@ -59,23 +62,28 @@ fun LimitContent(
     settingViewModel: SettingViewModel = hiltViewModel()
 ) {
     val MILLISECS = 86_400_000L
-    val limitDuration = listOf(1*MILLISECS, 7*MILLISECS, 30*MILLISECS)
+    val limitDuration = listOf(1 * MILLISECS, 7 * MILLISECS, 30 * MILLISECS)
     val limitDurationText by remember {
         mutableStateOf(
             listOf("Daily", "Weekly", "Monthly")
         )
     }
-    var selectedLimit by remember { mutableStateOf(limitDurationText.first()) }
+    var selectedIndex by remember { mutableStateOf(0) }
+    val expenseLimitAmount by settingViewModel.expenseLimit.collectAsState()
+    val expenseLimitDuration by settingViewModel.expenseLimitDuration.collectAsState()
+    var selectedLimit by remember { mutableStateOf(limitDurationText[expenseLimitDuration]) }
     var isAmountEmpty by remember { mutableStateOf(false) }
-    var limitTextFieldValue by remember { mutableStateOf(TextFieldValue(String())) }
+    var limitTextFieldValue by remember { mutableStateOf(TextFieldValue(expenseLimitAmount.toString())) }
     var expandedState by remember { mutableStateOf(false) }
     var size by remember { mutableStateOf(Size.Zero) }
 
     val context = LocalContext.current
-    val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-    var resetJob: JobInfo = JobInfo.Builder(500, ComponentName(context, LimitResetJobService::class.java))
-        .setPeriodic(limitDuration.first())
-        .build()
+    var resetWorkRequest = PeriodicWorkRequestBuilder<LimitResetWorker>(
+        limitDuration.first(),
+        TimeUnit.MILLISECONDS,
+        (limitDuration.first() * 0.95).toLong(),
+        TimeUnit.MILLISECONDS
+    ).build()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -158,10 +166,13 @@ fun LimitContent(
                     DropdownMenuItem(onClick = {
                         selectedLimit = label
                         expandedState = false
-                        settingViewModel.editLimitDuration(index)
-                        resetJob = JobInfo.Builder(500, ComponentName(context, LimitResetJobService::class.java))
-                            .setPeriodic(limitDuration[index])
-                            .build()
+                        selectedIndex = index
+                         resetWorkRequest = PeriodicWorkRequestBuilder<LimitResetWorker>(
+                            limitDuration[index],
+                            TimeUnit.MILLISECONDS,
+                            (limitDuration[index] * 0.95).toLong(),
+                            TimeUnit.MILLISECONDS
+                        ).build()
                     }) {
                         Text(
                             text = label,
@@ -183,7 +194,13 @@ fun LimitContent(
                         isAmountEmpty = false
                         settingViewModel.editExpenseLimit(limitTextFieldValue.text.toDouble())
                         modalBottomSheetState.hide()
-                        jobScheduler.schedule(resetJob)
+                        settingViewModel.editLimitDuration(selectedIndex)
+                        val workManager = WorkManager.getInstance(context)
+                        workManager.enqueueUniquePeriodicWork(
+                            "RESET",
+                            ExistingPeriodicWorkPolicy.REPLACE,
+                            resetWorkRequest
+                        )
                     }
                 }
             },
