@@ -124,4 +124,7 @@ dependencies {
     // Kotlin + coroutines
     implementation("androidx.work:work-runtime-ktx:$work_version")
 
+    // sentry sdk
+    implementation 'io.sentry:sentry-android:5.7.3'
+
 }

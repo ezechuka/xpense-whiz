@@ -137,27 +137,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(IO) {
             getLimitDurationUseCase().collect { pref ->
                 duration.value = pref
-                Log.d("duration1", pref.toString())
-//                when (pref) {
-//                    0 -> {
-//                        getCurrentDayExpTransactionUseCase().collect { result ->
-//                            val trx = result.map { trans -> trans.toTransaction() }
-//                            currentExpenseAmount.value = calculateTransaction(trx.map { it.amount })
-//                        }
-//                    }
-//                    1 -> {
-//                        getWeeklyExpTransactionUseCase().collect { result ->
-//                            val trx = result.map { trans -> trans.toTransaction() }
-//                            currentExpenseAmount.value = calculateTransaction(trx.map { it.amount })
-//                        }
-//                    }
-//                    else -> {
-//                        getMonthlyExpTransactionUse().collect { result ->
-//                            val trx = result.map { trans -> trans.toTransaction() }
-//                            currentExpenseAmount.value = calculateTransaction(trx.map { it.amount })
-//                        }
-//                    }
-//                }
             }
         }
 
