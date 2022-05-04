@@ -1,5 +1,7 @@
 package com.javalon.xpensewhiz.presentation.setting_screen.components
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,16 +18,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.javalon.xpensewhiz.R
+import com.javalon.xpensewhiz.common.Constants
 import com.javalon.xpensewhiz.util.spacing
 
 @Composable
 fun PrivacySetting() {
+    val context = LocalContext.current
     TextButton(
         onClick = {
+            val privacyIntent = Intent(Intent.ACTION_VIEW, Uri.parse(Constants.PRIVACY_URL))
+            context.startActivity(privacyIntent)
         },
         modifier = Modifier
             .fillMaxSize()
