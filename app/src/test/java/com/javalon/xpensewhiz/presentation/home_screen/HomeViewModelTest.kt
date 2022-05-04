@@ -18,6 +18,7 @@ import com.javalon.xpensewhiz.domain.usecase.read_database.GetWeeklyExpTransacti
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetCurrencyUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetExpenseLimitUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetLimitDurationUseCase
+import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetLimitKeyUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.InsertAccountsUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.InsertNewTransactionUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.MockitoHelper.anyObject
@@ -49,6 +50,7 @@ class HomeViewModelTest {
     private lateinit var getCurrencyUseCase: GetCurrencyUseCase
     private lateinit var getExpenseLimitUseCase: GetExpenseLimitUseCase
     private lateinit var getLimitDurationUseCase: GetLimitDurationUseCase
+    private lateinit var getLimitKeyUseCase: GetLimitKeyUseCase
     private lateinit var getCurrentDayExpTransactionUseCase: GetCurrentDayExpTransactionUseCase
     private lateinit var getWeeklyExpTransactionUseCase: GetWeeklyExpTransactionUseCase
     private lateinit var getMonthlyExpTransactionUse: GetMonthlyExpTransactionUse
@@ -68,6 +70,7 @@ class HomeViewModelTest {
         getAccountsUseCase = GetAccountsUseCase(transactionRepository)
         getCurrencyUseCase = GetCurrencyUseCase(datastoreRepository)
         getExpenseLimitUseCase = GetExpenseLimitUseCase(datastoreRepository)
+        getLimitKeyUseCase = GetLimitKeyUseCase(datastoreRepository)
         getLimitDurationUseCase = GetLimitDurationUseCase(datastoreRepository)
         getCurrentDayExpTransactionUseCase =
             GetCurrentDayExpTransactionUseCase(transactionRepository)
@@ -100,6 +103,7 @@ class HomeViewModelTest {
             getCurrencyUseCase,
             getExpenseLimitUseCase,
             getLimitDurationUseCase,
+            getLimitKeyUseCase,
             getCurrentDayExpTransactionUseCase,
             getWeeklyExpTransactionUseCase,
             getMonthlyExpTransactionUse
@@ -146,8 +150,8 @@ class HomeViewModelTest {
     @Test
     fun `when homeviewmodel is created, retrieve all expense info`() = runBlocking {
         homeViewModel.totalExpense.test {
-            val income = awaitItem()
-            assertThat(income).isEqualTo(15.0)
+            val expense = awaitItem()
+            assertThat(expense).isEqualTo(15.0)
         }
     }
 }

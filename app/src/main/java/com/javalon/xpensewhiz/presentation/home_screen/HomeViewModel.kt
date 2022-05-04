@@ -1,5 +1,6 @@
 package com.javalon.xpensewhiz.presentation.home_screen
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,6 +20,7 @@ import com.javalon.xpensewhiz.domain.usecase.read_database.GetWeeklyExpTransacti
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetCurrencyUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetExpenseLimitUseCase
 import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetLimitDurationUseCase
+import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetLimitKeyUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.InsertAccountsUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.InsertNewTransactionUseCase
 import com.javalon.xpensewhiz.presentation.ui.theme.businessBg
@@ -41,12 +43,14 @@ import com.javalon.xpensewhiz.presentation.ui.theme.travelBg
 import com.javalon.xpensewhiz.presentation.ui.theme.vehicleBg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -64,12 +68,14 @@ class HomeViewModel @Inject constructor(
     private val getCurrencyUseCase: GetCurrencyUseCase,
     private val getExpenseLimitUseCase: GetExpenseLimitUseCase,
     private val getLimitDurationUseCase: GetLimitDurationUseCase,
+    private val getLimitKeyUseCase: GetLimitKeyUseCase,
     private val getCurrentDayExpTransactionUseCase: GetCurrentDayExpTransactionUseCase,
     private val getWeeklyExpTransactionUseCase: GetWeeklyExpTransactionUseCase,
     private val getMonthlyExpTransactionUse: GetMonthlyExpTransactionUse
 ) : ViewModel() {
     private var _isDecimal = MutableStateFlow(false)
     private var decimal: String = String()
+    private var duration = MutableStateFlow(0)
 
     var tabButton = MutableStateFlow(TabButton.TODAY)
         private set
@@ -119,21 +125,51 @@ class HomeViewModel @Inject constructor(
     var limitAlert = MutableSharedFlow<UIEvent>(replay = 1)
         private set
 
+    var limitKey = MutableStateFlow(false)
+        private set
+
     init {
-        var duration = 0
         val currentDate = getDateUseCase()
         formattedDate.value = getFormattedDateUseCase(currentTime.value)
         date.value = currentDate
         currencyFormat()
 
         viewModelScope.launch(IO) {
-            getLimitDurationUseCase().collectLatest { pref ->
-                duration = pref
+            getLimitDurationUseCase().collect { pref ->
+                duration.value = pref
+                Log.d("duration1", pref.toString())
+//                when (pref) {
+//                    0 -> {
+//                        getCurrentDayExpTransactionUseCase().collect { result ->
+//                            val trx = result.map { trans -> trans.toTransaction() }
+//                            currentExpenseAmount.value = calculateTransaction(trx.map { it.amount })
+//                        }
+//                    }
+//                    1 -> {
+//                        getWeeklyExpTransactionUseCase().collect { result ->
+//                            val trx = result.map { trans -> trans.toTransaction() }
+//                            currentExpenseAmount.value = calculateTransaction(trx.map { it.amount })
+//                        }
+//                    }
+//                    else -> {
+//                        getMonthlyExpTransactionUse().collect { result ->
+//                            val trx = result.map { trans -> trans.toTransaction() }
+//                            currentExpenseAmount.value = calculateTransaction(trx.map { it.amount })
+//                        }
+//                    }
+//                }
             }
         }
 
         viewModelScope.launch(IO) {
-            when (duration) {
+            getLimitKeyUseCase().collectLatest { pref ->
+                limitKey.value = pref
+            }
+        }
+
+        viewModelScope.launch(IO) {
+            Log.d("duration", duration.value.toString())
+            when (duration.value) {
                 0 -> {
                     getCurrentDayExpTransactionUseCase().collect { result ->
                         val trx = result.map { trans -> trans.toTransaction() }
@@ -219,7 +255,8 @@ class HomeViewModel @Inject constructor(
         amount: Double,
         category: String,
         transactionType: String,
-        transactionTitle: String
+        transactionTitle: String,
+        navigateBack: () -> Unit
     ) {
         viewModelScope.launch(IO) {
             if (amount <= 0.0) {
@@ -258,6 +295,9 @@ class HomeViewModel @Inject constructor(
                 currentAccount.balance = balance
 
                 insertAccountsUseCase(listOf(currentAccount))
+            }
+            withContext(Main) {
+                navigateBack()
             }
         }
     }
@@ -347,7 +387,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun updateTransaction(transactionDate: String?, transactionPos: Int?, transactionStatus: Int?) {
+    fun updateTransaction(
+        transactionDate: String?,
+        transactionPos: Int?,
+        transactionStatus: Int?,
+        navigateBack: () -> Unit
+    ) {
         if (transactionPos != -1 && transactionStatus != -1) {
             val transaction = if (transactionStatus == 0)
                 dailyTransaction.value[transactionPos!!]
@@ -383,6 +428,9 @@ class HomeViewModel @Inject constructor(
                     transactionTitle.value
                 )
                 insertDailyTransactionUseCase(updateTransaction)
+                withContext(Main) {
+                    navigateBack()
+                }
             }
         }
     }
@@ -390,16 +438,19 @@ class HomeViewModel @Inject constructor(
     fun displayExpenseLimitWarning() {
         viewModelScope.launch(IO) {
             getExpenseLimitUseCase().collectLatest { expenseAmount ->
+                if (expenseAmount <= 0.0) return@collectLatest
                 val threshold = 0.8 * expenseAmount
                 when {
                     currentExpenseAmount.value > expenseAmount -> {
-                        val expenseOverflow = currentExpenseAmount.value - expenseAmount
+                        val expenseOverflow =
+                            (currentExpenseAmount.value - expenseAmount).toString().amountFormat()
                         val info =
                             "${selectedCurrencyCode.value} $expenseOverflow over specified limit"
                         limitAlert.emit(UIEvent.Alert(info))
                     }
                     currentExpenseAmount.value > threshold -> {
-                        val expenseAvailable = expenseAmount - currentExpenseAmount.value
+                        val expenseAvailable =
+                            (expenseAmount - currentExpenseAmount.value).toString().amountFormat()
                         val info =
                             "${selectedCurrencyCode.value} $expenseAvailable away from specified limit"
                         limitAlert.emit(UIEvent.Alert(info))
@@ -419,12 +470,12 @@ class HomeViewModel @Inject constructor(
     }
 
     sealed class UIEvent {
-        data class Alert(val info: String): UIEvent()
-        data class NoAlert(val info: String = String()): UIEvent()
+        data class Alert(val info: String) : UIEvent()
+        data class NoAlert(val info: String = String()) : UIEvent()
     }
 }
 
-fun String.amountFormat() : String {
+fun String.amountFormat(): String {
     val amountFormatter = DecimalFormat("#,##0.00")
     return " " + amountFormatter.format(this.toDouble())
 }
