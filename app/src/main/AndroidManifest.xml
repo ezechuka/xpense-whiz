@@ -6,15 +6,16 @@
     <application
         android:name=".di.XpenseApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/xpense_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/xpense_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.XpenseWhiz">
         <activity
             android:name=".presentation.main.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.XpenseWhiz">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

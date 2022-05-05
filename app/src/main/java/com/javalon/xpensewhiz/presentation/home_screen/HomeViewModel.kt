@@ -147,7 +147,6 @@ class HomeViewModel @Inject constructor(
         }
 
         viewModelScope.launch(IO) {
-            Log.d("duration", duration.value.toString())
             when (duration.value) {
                 0 -> {
                     getCurrentDayExpTransactionUseCase().collect { result ->

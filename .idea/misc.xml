@@ -3,7 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/compose-model-1651597209827.xml" value="2.0" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.20572916666666666" />
         <entry key="app/src/main/res/drawable/info_warning.xml" value="0.20572916666666666" />
+        <entry key="app/src/main/res/drawable/xpense_launcher_foreground.xml" value="0.1" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/xpense_launcher.xml" value="0.20572916666666666" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/xpense_launcher_round.xml" value="0.20572916666666666" />
       </map>
     </option>
   </component>
