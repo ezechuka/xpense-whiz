@@ -267,10 +267,12 @@ fun Header(
                             painter = painterResource(id = R.drawable.income),
                             contentDescription = "Income",
                             tint = MaterialTheme.colors.surface,
-                            modifier = Modifier.constrainAs(incomeIcon) {
-                                start.linkTo(parent.start)
-                                top.linkTo(parent.top)
-                            }.then(Modifier.size(24.dp))
+                            modifier = Modifier
+                                .constrainAs(incomeIcon) {
+                                    start.linkTo(parent.start)
+                                    top.linkTo(parent.top)
+                                }
+                                .then(Modifier.size(24.dp))
                         )
                         Text(
                             text = "Income",
@@ -345,10 +347,12 @@ fun Header(
                             painter = painterResource(id = R.drawable.expense),
                             contentDescription = "Expense",
                             tint = MaterialTheme.colors.surface,
-                            modifier = Modifier.constrainAs(expenseIcon) {
-                                start.linkTo(parent.start)
-                                top.linkTo(parent.top)
-                            }.then(Modifier.size(24.dp))
+                            modifier = Modifier
+                                .constrainAs(expenseIcon) {
+                                    start.linkTo(parent.start)
+                                    top.linkTo(parent.top)
+                                }
+                                .then(Modifier.size(24.dp))
                         )
                         Text(
                             text = "Expense",
