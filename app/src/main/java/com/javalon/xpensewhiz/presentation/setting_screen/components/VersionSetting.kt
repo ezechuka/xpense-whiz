@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.javalon.xpensewhiz.util.spacing
@@ -47,8 +48,10 @@ fun VersionSetting() {
         )
 
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
+            val context = LocalContext.current
+            val packageManager = context.packageManager.getPackageInfo("com.javalon.xpensewhiz", 0)
             Text(
-                text = "1.0.0",
+                text = packageManager.versionName,
                 style = MaterialTheme.typography.subtitle2
             )
         }
