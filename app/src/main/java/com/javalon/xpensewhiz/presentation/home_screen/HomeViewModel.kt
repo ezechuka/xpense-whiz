@@ -1,6 +1,5 @@
 package com.javalon.xpensewhiz.presentation.home_screen
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -55,6 +54,7 @@ import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 
+
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getDateUseCase: GetDateUseCase,
@@ -73,8 +73,9 @@ class HomeViewModel @Inject constructor(
     private val getWeeklyExpTransactionUseCase: GetWeeklyExpTransactionUseCase,
     private val getMonthlyExpTransactionUse: GetMonthlyExpTransactionUse
 ) : ViewModel() {
-    private var _isDecimal = MutableStateFlow(false)
+
     private var decimal: String = String()
+    private var isDecimal = MutableStateFlow(false)
     private var duration = MutableStateFlow(0)
 
     var tabButton = MutableStateFlow(TabButton.TODAY)
@@ -285,11 +286,11 @@ class HomeViewModel @Inject constructor(
         val whole = value.substring(0, value.indexOf("."))
 
         if (amount == ".") {
-            _isDecimal.value = true
+            isDecimal.value = true
             return
         }
 
-        if (_isDecimal.value) {
+        if (isDecimal.value) {
             if (decimal.length == 2) {
                 decimal = decimal.substring(0, decimal.length - 1) + amount
             } else {
@@ -315,11 +316,11 @@ class HomeViewModel @Inject constructor(
             return
         }
 
-        if (_isDecimal.value) {
+        if (isDecimal.value) {
             decimal = if (decimal.length == 2) {
                 decimal.substring(0, decimal.length - 1)
             } else {
-                _isDecimal.value = false
+                isDecimal.value = false
                 "0"
             }
             val newDecimal = decimal.toDouble() / 100.0
