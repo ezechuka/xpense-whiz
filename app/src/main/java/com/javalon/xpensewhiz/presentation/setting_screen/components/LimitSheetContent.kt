@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
@@ -73,7 +75,7 @@ fun LimitContent(
     val expenseLimitDuration by settingViewModel.expenseLimitDuration.collectAsState()
     var selectedLimit by remember { mutableStateOf(limitDurationText[expenseLimitDuration]) }
     var isAmountEmpty by remember { mutableStateOf(false) }
-    var limitTextFieldValue by remember { mutableStateOf(TextFieldValue(expenseLimitAmount.toString())) }
+    var limitTextFieldValue by remember { mutableStateOf(TextFieldValue(String())) }
     var expandedState by remember { mutableStateOf(false) }
     var size by remember { mutableStateOf(Size.Zero) }
 
@@ -87,7 +89,7 @@ fun LimitContent(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium),
+        verticalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier
             .fillMaxWidth()
             .padding(MaterialTheme.spacing.medium)
@@ -113,7 +115,7 @@ fun LimitContent(
             singleLine = true,
             placeholder = {
                 Text(
-                    text = "Amount",
+                    text = if (expenseLimitAmount == 0.0) "Amount" else expenseLimitAmount.toString(),
                     style = MaterialTheme.typography.subtitle2
                 )
             },
@@ -167,7 +169,7 @@ fun LimitContent(
                         selectedLimit = label
                         expandedState = false
                         selectedIndex = index
-                         resetWorkRequest = PeriodicWorkRequestBuilder<LimitResetWorker>(
+                        resetWorkRequest = PeriodicWorkRequestBuilder<LimitResetWorker>(
                             limitDuration[index],
                             TimeUnit.MILLISECONDS,
                             (limitDuration[index] * 0.95).toLong(),
@@ -182,6 +184,26 @@ fun LimitContent(
                     }
                 }
             }
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        TextButton(
+            onClick = {
+                scope.launch { modalBottomSheetState.hide() }
+            },
+            modifier = Modifier
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color.LightGray.copy(alpha = 0.4f),
+                contentColor = Color.Black
+            ),
+            contentPadding = PaddingValues(vertical = 16.dp)
+        ) {
+            Text(
+                text = "CANCEL",
+                style = MaterialTheme.typography.button
+            )
         }
 
         TextButton(
@@ -215,24 +237,6 @@ fun LimitContent(
         ) {
             Text(
                 text = "SET",
-                style = MaterialTheme.typography.button
-            )
-        }
-
-        TextButton(
-            onClick = {
-                scope.launch { modalBottomSheetState.hide() }
-            },
-            modifier = Modifier
-                .fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Transparent,
-                contentColor = Color.Black
-            ),
-            contentPadding = PaddingValues(vertical = 16.dp)
-        ) {
-            Text(
-                text = "CANCEL",
                 style = MaterialTheme.typography.button
             )
         }
