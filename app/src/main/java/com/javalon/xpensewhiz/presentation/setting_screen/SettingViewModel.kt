@@ -12,6 +12,7 @@ import com.javalon.xpensewhiz.domain.usecase.write_database.InsertAccountsUseCas
 import com.javalon.xpensewhiz.domain.usecase.write_datastore.EditExpenseLimitUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_datastore.EditLimitDurationUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_datastore.EditLimitKeyUseCase
+import com.javalon.xpensewhiz.domain.usecase.write_datastore.EraseDatastoreUseCase
 import com.javalon.xpensewhiz.presentation.home_screen.Account
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -29,7 +30,8 @@ class SettingViewModel @Inject constructor(
     private val getLimitKeyUseCase: GetLimitKeyUseCase,
     private val editLimitKeyUseCase: EditLimitKeyUseCase,
     private val editLimitDurationUseCase: EditLimitDurationUseCase,
-    private val getLimitDurationUseCase: GetLimitDurationUseCase
+    private val getLimitDurationUseCase: GetLimitDurationUseCase,
+    private val eraseDatastoreUseCase: EraseDatastoreUseCase
 ) : ViewModel() {
 
     var currency = MutableStateFlow(String())
@@ -82,6 +84,8 @@ class SettingViewModel @Inject constructor(
             )
             // erase transactions
             eraseTransactionUseCase()
+            // erase datastore
+            eraseDatastoreUseCase()
         }
     }
 
