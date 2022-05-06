@@ -100,4 +100,12 @@ class DatastoreRepositoryImpl @Inject constructor(context: Context) : DatastoreR
             }
         }
     }
+
+    override suspend fun eraseDataStore() {
+        datastore.edit {
+            it.remove(limitKey)
+            it.remove(limitDuration)
+            it.remove(expenseLimit)
+        }
+    }
 }
