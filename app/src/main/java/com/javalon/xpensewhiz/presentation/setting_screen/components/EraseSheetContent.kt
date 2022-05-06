@@ -52,6 +52,25 @@ fun EraseContent(
             color = Color.DarkGray.copy(alpha = 0.5f),
             modifier = Modifier.padding(top = MaterialTheme.spacing.medium)
         )
+
+        TextButton(
+            onClick = {
+                scope.launch { modalBottomSheetState.hide() }
+            },
+            modifier = Modifier
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color.LightGray.copy(alpha = 0.4f),
+                contentColor = Color.Black
+            ),
+            contentPadding = PaddingValues(vertical = 16.dp)
+        ) {
+            Text(
+                text = "CANCEL",
+                style = MaterialTheme.typography.button
+            )
+        }
+
         TextButton(
             onClick = {
                 scope.launch {
@@ -70,24 +89,6 @@ fun EraseContent(
         ) {
             Text(
                 text = "CONTINUE",
-                style = MaterialTheme.typography.button
-            )
-        }
-
-        TextButton(
-            onClick = {
-                scope.launch { modalBottomSheetState.hide() }
-            },
-            modifier = Modifier
-                .fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Transparent,
-                contentColor = Color.Black
-            ),
-            contentPadding = PaddingValues(vertical = 16.dp)
-        ) {
-            Text(
-                text = "CANCEL",
                 style = MaterialTheme.typography.button
             )
         }
