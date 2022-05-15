@@ -4,9 +4,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -56,6 +56,7 @@ import kotlin.math.abs
 @ExperimentalUnitApi
 @Composable
 fun Header(
+    modifier: Modifier = Modifier,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -71,9 +72,9 @@ fun Header(
     val medium = MaterialTheme.spacing.medium
 
     BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.5f),
+        modifier = modifier
+            .height(250.dp)
+            .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
 
@@ -81,12 +82,8 @@ fun Header(
         val layoutHeight = constraints.maxHeight
 
         Surface(
-            modifier = Modifier.padding(
-                start = MaterialTheme.spacing.medium,
-                top = MaterialTheme.spacing.medium,
-                end = MaterialTheme.spacing.medium,
-                bottom = MaterialTheme.spacing.small
-            ), color = Color.DarkGray.copy(alpha = 0.1f), shape = RoundedCornerShape(24.dp)
+            color = Color.DarkGray.copy(alpha = 0.1f),
+            shape = RoundedCornerShape(24.dp)
         ) {
             ConstraintLayout(
                 modifier = Modifier
