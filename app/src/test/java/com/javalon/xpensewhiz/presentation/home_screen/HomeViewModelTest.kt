@@ -22,6 +22,8 @@ import com.javalon.xpensewhiz.domain.usecase.read_datastore.GetLimitKeyUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.InsertAccountsUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.InsertNewTransactionUseCase
 import com.javalon.xpensewhiz.domain.usecase.write_database.MockitoHelper.anyObject
+import com.javalon.xpensewhiz.util.CoroutineRule
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -31,6 +33,10 @@ import org.mockito.Mockito.`when`
 import org.mockito.kotlin.mock
 
 class HomeViewModelTest {
+
+    @ExperimentalCoroutinesApi
+    @get:Rule
+    val coroutineRule = CoroutineRule()
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
