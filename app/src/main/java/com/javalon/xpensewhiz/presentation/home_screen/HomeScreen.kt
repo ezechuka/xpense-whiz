@@ -72,7 +72,7 @@ fun HomeScreen(
         ) {
 
             // header
-            Header(bottomSheetScaffoldState)
+            Header(modifier = Modifier, bottomSheetScaffoldState)
 
             // Button tabs
             TabButton()

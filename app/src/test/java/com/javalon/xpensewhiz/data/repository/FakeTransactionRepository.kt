@@ -12,7 +12,7 @@ import java.util.Date
 
 class FakeTransactionRepository : TransactionRepository {
     private val date: Date = Calendar.getInstance().time
-    private val trxList = listOf(
+    private val trxList = mutableListOf(
         TransactionDto(
             date,
             "2022-04-28",
@@ -39,7 +39,18 @@ class FakeTransactionRepository : TransactionRepository {
     )
 
     override suspend fun insertTransaction(dailyExpense: TransactionDto) {
-        return
+        val date: Date = Calendar.getInstance().time
+        trxList.add(
+            TransactionDto(
+                date,
+                "2022-04-28",
+                200.0,
+                Account.BANK.title,
+                Category.MISC.title,
+                "expense",
+                ""
+            )
+        )
     }
 
     override suspend fun insertAccount(accounts: List<AccountDto>) {
