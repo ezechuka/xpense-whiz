@@ -1,6 +1,5 @@
 package com.javalon.xpensewhiz.presentation.home_screen
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.javalon.xpensewhiz.data.repository.FakeTransactionRepository
@@ -25,21 +24,20 @@ import com.javalon.xpensewhiz.domain.usecase.write_database.MockitoHelper.anyObj
 import com.javalon.xpensewhiz.util.CoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runCurrent
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.mock
 
+@ExperimentalCoroutinesApi
 class HomeViewModelTest {
 
-    @ExperimentalCoroutinesApi
     @get:Rule
     val coroutineRule = CoroutineRule()
-
-    @get:Rule
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var transactionRepository: TransactionRepository
@@ -89,7 +87,7 @@ class HomeViewModelTest {
         `when`(getFormattedDateUseCase.invoke(anyObject()))
             .thenReturn("Thu 28, Apr")
 
-        runBlocking {
+        runTest {
             `when`(getCurrencyUseCase.invoke()).thenReturn(
                 flow {
                     emit("NGN")
@@ -118,46 +116,152 @@ class HomeViewModelTest {
 
     @Test
     fun `when homeviewmodel is created, retrieve daily transactions`() =
-        runBlocking {
-            homeViewModel.dailyTransaction.test {
-                val dailyTrx = awaitItem()
-                assertThat(dailyTrx.size).isGreaterThan(0)
+        runTest {
+            launch {
+                homeViewModel.dailyTransaction.test {
+                    val dailyTrx = awaitItem()
+                    assertThat(dailyTrx.size).isGreaterThan(0)
+                    cancelAndConsumeRemainingEvents()
+                }
+            }
+            runCurrent()
+        }
+
+    @Test
+    fun `when homeviewmodel is created, retrieve all transactions`() = runTest {
+        launch {
+            homeViewModel.monthlyTransaction.test {
+                val allTrx = awaitItem()
+                assertThat(allTrx.size).isGreaterThan(0)
                 cancelAndConsumeRemainingEvents()
             }
         }
-
-    @Test
-    fun `when homeviewmodel is created, retrieve all transactions`() = runBlocking {
-        homeViewModel.monthlyTransaction.test {
-            val allTrx = awaitItem()
-            assertThat(allTrx.size).isGreaterThan(0)
-            cancelAndConsumeRemainingEvents()
-        }
+        runCurrent()
     }
 
     @Test
-    fun `when homeviewmodel is created, retrieve selected currency`() = runBlocking {
-        homeViewModel.selectedCurrencyCode.test {
-            val currency = awaitItem()
-            assertThat(currency).isNotEmpty()
-            cancelAndConsumeRemainingEvents()
-
+    fun `when homeviewmodel is created, retrieve selected currency`() = runTest {
+        launch {
+            homeViewModel.selectedCurrencyCode.test {
+                val currency = awaitItem()
+                assertThat(currency).isNotEmpty()
+                cancelAndConsumeRemainingEvents()
+            }
         }
+        runCurrent()
     }
 
     @Test
-    fun `when homeviewmodel is created, retrieve all income info`() = runBlocking {
-        homeViewModel.totalIncome.test {
-            val income = awaitItem()
-            assertThat(income).isEqualTo(30.0)
+    fun `when homeviewmodel is created, retrieve all income info`() = runTest {
+        launch {
+            homeViewModel.totalIncome.test {
+                val income = awaitItem()
+                assertThat(income).isEqualTo(30.0)
+                cancelAndConsumeRemainingEvents()
+            }
         }
+        runCurrent()
     }
 
     @Test
-    fun `when homeviewmodel is created, retrieve all expense info`() = runBlocking {
-        homeViewModel.totalExpense.test {
-            val expense = awaitItem()
-            assertThat(expense).isEqualTo(15.0)
+    fun `when homeviewmodel is created, retrieve all expense info`() = runTest {
+        launch {
+            homeViewModel.totalExpense.test {
+                val expense = awaitItem()
+                assertThat(expense).isEqualTo(15.0)
+                cancelAndConsumeRemainingEvents()
+            }
         }
+        runCurrent()
+    }
+
+    @Test
+    fun `when homeviewmodel is created, retrieve expense limit amount info`() = runTest {
+        launch {
+            homeViewModel.currentExpenseAmount.test {
+                val expenseLimitAmount = awaitItem()
+                assertThat(expenseLimitAmount).isGreaterThan(0.0)
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+        runCurrent()
+    }
+
+    @Test
+    fun `when homeviewmodel is created, check if expense limit is enabled`() = runTest {
+        launch {
+            homeViewModel.limitKey.test {
+                val limitEnabled = awaitItem()
+                assertThat(limitEnabled).isNotNull()
+                cancelAndConsumeRemainingEvents()
+            }
+        }
+        runCurrent()
+    }
+
+    @Test
+    fun `inserting a transaction, triggers the correct use cases`() = runTest {
+
+    }
+
+    @Test
+    fun `inputting amount without point, correctly sets the transaction amount`() {
+        homeViewModel.setTransaction("1")
+        homeViewModel.setTransaction("0")
+        homeViewModel.setTransaction("0")
+
+        assertThat(homeViewModel.transactionAmount.value).isEqualTo("100.00")
+    }
+
+    @Test
+    fun `inputting amount with point, correctly sets the transaction amount`() {
+        homeViewModel.setTransaction("1")
+        homeViewModel.setTransaction("0")
+        homeViewModel.setTransaction("0")
+        homeViewModel.setTransaction(".")
+        homeViewModel.setTransaction("3")
+        homeViewModel.setTransaction("2")
+
+        assertThat(homeViewModel.transactionAmount.value).isEqualTo("100.32")
+    }
+
+    @Test
+    fun `when inputting amount with fractional part above 2 digits, truncates it down to 2 digits only`() {
+        homeViewModel.setTransaction("1")
+        homeViewModel.setTransaction("0")
+        homeViewModel.setTransaction("0")
+        homeViewModel.setTransaction(".")
+        homeViewModel.setTransaction("3")
+        homeViewModel.setTransaction("4")
+        homeViewModel.setTransaction("1")
+        homeViewModel.setTransaction("5")
+
+        assertThat(homeViewModel.transactionAmount.value).isEqualTo("100.35")
+    }
+
+    @Test
+    fun `backspace correctly deletes rightmost digit from transaction amount without point`() {
+        homeViewModel.setTransaction("1")
+        homeViewModel.setTransaction("0")
+        homeViewModel.setTransaction("0")
+
+        homeViewModel.backspace()
+
+        assertThat(homeViewModel.transactionAmount.value).isEqualTo("10.00")
+    }
+
+    @Test
+    fun `backspace correctly deletes rightmost digit from transaction amount with point`() {
+        homeViewModel.setTransaction("1")
+        homeViewModel.setTransaction("0")
+        homeViewModel.setTransaction("0")
+        homeViewModel.setTransaction(".")
+        homeViewModel.setTransaction("3")
+        homeViewModel.setTransaction("2")
+
+        homeViewModel.backspace()
+        homeViewModel.backspace()
+
+        assertThat(homeViewModel.transactionAmount.value).isEqualTo("100.00")
     }
 }
